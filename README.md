@@ -32,6 +32,7 @@ GitHub Pages über `.github/workflows/pages.yml` bei jedem Push auf `main`. Einm
 ## Aufbau
 
 - `src/App.tsx`: Anmeldung, Link einlösen, Laden
+- Anmeldung: Link 15 Minuten, einmalig. Die Sitzung gilt 30 Tage und verlängert sich, wenn das Portal geöffnet wird (höchstens einmal am Tag, neue Sitzung kommt im Header `X-Sitzung`).
 - `src/portal.tsx`: Daten und Aktionen (Freigabe mit 5 Sekunden Rückgängig, Download, Fehler, Abmelden bei 401)
 - `src/Shell.tsx`: Leiste (am Handy unten), Seiten, Seitenblätter
 - `src/seiten/*`: Seiten und Seitenblätter

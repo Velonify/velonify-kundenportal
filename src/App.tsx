@@ -20,7 +20,7 @@ type Zustand =
 export function App() {
   const route = useRoute();
   const [sitzung, setSitzung] = useState(() => holeSitzung());
-  const api: PortalApi = useMemo(() => (DEMO ? new DemoApi() : new HttpApi(API_URL, () => holeSitzung())), []);
+  const api: PortalApi = useMemo(() => (DEMO ? new DemoApi() : new HttpApi(API_URL, () => holeSitzung(), speichereSitzung)), []);
   const [zustand, setZustand] = useState<Zustand>(() => (route.seite === 'anmelden' ? { art: 'einloesen' } : sitzung ? { art: 'laden' } : { art: 'login' }));
 
   const abmelden = useCallback((hinweis?: string) => {

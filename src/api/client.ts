@@ -7,6 +7,8 @@ export class HttpApi implements PortalApi {
   constructor(
     private readonly basis: string,
     private readonly sitzung: () => string | null,
+    /** The function slides the session on use and sends the new one in X-Sitzung / X-Sitzung-Bis. */
+    private readonly neueSitzung: (s: Sitzung) => void = () => {},
   ) {}
 
   private kopf(extra: Record<string, string> = {}): Record<string, string> {
@@ -36,6 +38,9 @@ export class HttpApi implements PortalApi {
     } catch {
       throw new ApiFehler(VERBINDUNG, 0);
     }
+    const neu = res.headers.get('x-sitzung');
+    const bis = res.headers.get('x-sitzung-bis');
+    if (res.ok && neu && bis) this.neueSitzung({ sitzung: neu, gueltig_bis: bis });
     return this.antwort<T>(res);
   }
 

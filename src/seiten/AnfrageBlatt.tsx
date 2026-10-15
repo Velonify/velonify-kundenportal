@@ -106,7 +106,16 @@ export function AnfrageBlatt({ onClose }: { onClose: () => void }) {
         {dringend && (
           <div className="meldung warn">
             <Icon name="tel" />
-            <span>Kunden können gerade nicht kaufen? Ruf uns zusätzlich an: <a href={KONTAKT.telefonLink} style={{ fontWeight: 800 }}>{KONTAKT.telefon}</a></span>
+            <span>
+              Kunden können gerade nicht kaufen?{' '}
+              {p.daten.slack ? (
+                <>
+                  Schreib uns zusätzlich in <a href={p.daten.slack.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 800 }}>#{p.daten.slack.channel}</a>, im Notfall ruf an: <a href={KONTAKT.telefonLink} style={{ fontWeight: 800 }}>{KONTAKT.telefon}</a>
+                </>
+              ) : (
+                <>Ruf uns zusätzlich an: <a href={KONTAKT.telefonLink} style={{ fontWeight: 800 }}>{KONTAKT.telefon}</a></>
+              )}
+            </span>
           </div>
         )}
         <div className="feld">

@@ -84,7 +84,14 @@ export function Shell({ route }: { route: Route }) {
       </main>
 
       <footer className="fuss">
-        <span>Velonify · Fragen? <a href={`mailto:${KONTAKT.email}`}>{KONTAKT.email}</a></span>
+        <span>
+          Velonify · Fragen?{' '}
+          {daten.slack ? (
+            <a href={daten.slack.url} target="_blank" rel="noopener noreferrer">#{daten.slack.channel} in Slack</a>
+          ) : (
+            <a href={`mailto:${KONTAKT.email}`}>{KONTAKT.email}</a>
+          )}
+        </span>
         <a href={RECHTLICHES.impressum} target="_blank" rel="noopener noreferrer">Impressum</a>
         <a href={RECHTLICHES.datenschutz} target="_blank" rel="noopener noreferrer">Datenschutz</a>
       </footer>
@@ -140,9 +147,15 @@ function Menue() {
             <br />
             <span>{daten.kunde.name}</span>
           </div>
+          {daten.slack && (
+            <a href={daten.slack.url} target="_blank" rel="noopener noreferrer">
+              <Icon name="slack" />
+              In Slack schreiben
+            </a>
+          )}
           <a href={`mailto:${KONTAKT.email}`}>
             <Icon name="post" />
-            Velonify schreiben
+            {daten.slack ? 'E-Mail schreiben' : 'Velonify schreiben'}
           </a>
           <button type="button" onClick={abmelden}>
             <Icon name="aus" />

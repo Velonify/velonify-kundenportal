@@ -110,13 +110,21 @@ export function Neben() {
             <div><strong>{name}</strong></div>
           </div>
         ))}
-        <div className="person">
-          <span className="av klein" style={{ width: 32, height: 32 }}><Icon name="post" /></span>
-          <a href={`mailto:${KONTAKT.email}`}><strong>{KONTAKT.email}</strong><span>für alles, was keine Aufgabe ist</span></a>
-        </div>
-        <div className="person notfall">
-          <span className="av klein" style={{ width: 32, height: 32 }}><Icon name="tel" /></span>
-          <a href={KONTAKT.telefonLink}><strong>{KONTAKT.telefon}</strong><span>wenn der Shop nicht läuft</span></a>
+        <div className="kontaktwege">
+          {daten.slack && (
+            <a className="kontaktweg haupt" href={daten.slack.url} target="_blank" rel="noopener noreferrer">
+              <span className="av klein"><Icon name="slack" /></span>
+              <span><strong>#{daten.slack.channel}</strong><span>am schnellsten: schreib uns in Slack</span></span>
+            </a>
+          )}
+          <a className="kontaktweg" href={`mailto:${KONTAKT.email}`}>
+            <span className="av klein"><Icon name="post" /></span>
+            <span><strong>{KONTAKT.email}</strong><span>{daten.slack ? 'per E-Mail' : 'für alles, was keine Aufgabe ist'}</span></span>
+          </a>
+          <a className="kontaktweg" href={KONTAKT.telefonLink}>
+            <span className="av klein"><Icon name="tel" /></span>
+            <span><strong>{KONTAKT.telefon}</strong><span>im Notfall, wenn der Shop nicht läuft</span></span>
+          </a>
         </div>
       </div>
       {(werkzeuge.length > 0 || links.length > 0) && (

@@ -49,6 +49,8 @@ export interface PortalDatei {
 
 export interface Kundensicht {
   kunde: { name: string; kuerzel: string };
+  /** The client's Slack channel; the preferred way to reach the team. Null (or missing on an older function) without one. */
+  slack?: { channel: string; url: string } | null;
   ich: { vorname: string; nachname: string; email: string };
   team: string[];
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];

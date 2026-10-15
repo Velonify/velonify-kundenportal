@@ -14,6 +14,7 @@ const warte = (ms = 350) => new Promise((r) => setTimeout(r, ms));
 function startDaten(): Kundensicht {
   return {
     kunde: { name: 'Alpenglanz Kosmetik', kuerzel: 'ALP' },
+    slack: { channel: 'client-alp-general', url: 'https://slack.com/app_redirect?channel=client-alp-general' },
     ich: { vorname: 'Mara', nachname: 'Lindner', email: 'mara@alpenglanz.example' },
     team: ['Lukas', 'Julian'],
     fahrplan: [

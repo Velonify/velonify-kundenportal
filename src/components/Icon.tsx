@@ -22,6 +22,7 @@ const PFADE = {
   neu: 'M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4',
   warn: 'M12 4l9 16H3zM12 10v4M12 17v.5',
   muell: 'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13',
+  slack: 'M9 3v18M15 3v18M3 9h18M3 15h18',
 } as const;
 
 export type IconName = keyof typeof PFADE;

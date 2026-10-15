@@ -5,8 +5,8 @@ export const DEMO = !API_URL;
 export const KONTAKT = {
   email: 'hallo@velonify.de',
   /** Shown as the emergency number ("wenn der Shop nicht läuft"). */
-  telefon: '+49 1512 81 99 254',
-  telefonLink: 'tel:+4915128199254',
+  telefon: '+49 179 6944220',
+  telefonLink: 'tel:+491796944220',
 };
 
 export const RECHTLICHES = {

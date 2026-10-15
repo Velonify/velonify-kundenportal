@@ -58,9 +58,12 @@ export function Shell({ route }: { route: Route }) {
       )}
       <header className="bar">
         <div className="bar-in">
-          <a className="marke" href={pfadVon({ seite: 'start' })} aria-label={`Velonify · ${daten.kunde.name}`}>
-            <Logo /> VELONIFY <span className="kunde">{daten.kunde.name}</span>
-          </a>
+          <div className="marke-zeile">
+            <a className="marke" href={pfadVon({ seite: 'start' })} aria-label={`Velonify · ${daten.kunde.name}`}>
+              <Logo /> VELONIFY {(daten.firmen?.length ?? 0) < 2 && <span className="kunde">{daten.kunde.name}</span>}
+            </a>
+            {(daten.firmen?.length ?? 0) > 1 && <FirmenWechsler />}
+          </div>
           <nav className="tabs" aria-label="Portal">
             {TABS.map((t) => (
               <a key={t.seite} href={pfadVon({ seite: t.seite })} aria-current={aktiv === t.seite ? 'page' : undefined}>
@@ -125,7 +128,7 @@ function KarteFehlt({ onClose }: { onClose: () => void }) {
 }
 
 function Menue() {
-  const { daten, abmelden } = usePortal();
+  const { daten, abmelden, wechseln } = usePortal();
   const [offen, setOffen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const name = `${daten.ich.vorname} ${daten.ich.nachname}`.trim() || daten.ich.email;
@@ -157,6 +160,17 @@ function Menue() {
             <br />
             <span>{daten.kunde.name}</span>
           </div>
+          {(daten.firmen?.length ?? 0) > 1 && (
+            <div className="menue-firmen">
+              <span className="unterkopf">Kunde wechseln</span>
+              {daten.firmen!.map((f) => (
+                <button key={f.id} type="button" aria-current={f.name === daten.kunde.name ? 'true' : undefined} onClick={() => { setOffen(false); if (f.name !== daten.kunde.name) void wechseln(f.id); }}>
+                  {f.name === daten.kunde.name ? <Icon name="check" /> : <span className="i" />}
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          )}
           {daten.slack && (
             <a href={daten.slack.url} target="_blank" rel="noopener noreferrer">
               <Icon name="slack" />
@@ -171,6 +185,62 @@ function Menue() {
             <Icon name="aus" />
             Abmelden
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Switcher next to the logo for people who look after several clients. */
+function FirmenWechsler() {
+  const { daten, wechseln } = usePortal();
+  const [offen, setOffen] = useState(false);
+  const [laeuft, setLaeuft] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!offen) return;
+    const zu = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === 'Escape' : !ref.current?.contains(e.target as Node)) setOffen(false);
+    };
+    document.addEventListener('mousedown', zu);
+    document.addEventListener('keydown', zu);
+    return () => {
+      document.removeEventListener('mousedown', zu);
+      document.removeEventListener('keydown', zu);
+    };
+  }, [offen]);
+
+  return (
+    <div className="menue firmenwechsler" ref={ref}>
+      <button className="wechsler-btn" type="button" aria-expanded={offen} aria-haspopup="true" onClick={() => setOffen(!offen)}>
+        <span>{daten.kunde.name}</span>
+        <span aria-hidden="true">▾</span>
+      </button>
+      {offen && (
+        <div className="menue-liste links">
+          <span className="unterkopf" style={{ padding: '8px 10px 4px' }}>Deine Kunden</span>
+          {daten.firmen!.map((f) => {
+            const aktuell = f.name === daten.kunde.name;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                aria-current={aktuell ? 'true' : undefined}
+                disabled={!!laeuft}
+                onClick={async () => {
+                  if (aktuell) return setOffen(false);
+                  setLaeuft(f.id);
+                  await wechseln(f.id);
+                  setLaeuft('');
+                  setOffen(false);
+                }}
+              >
+                {aktuell ? <Icon name="check" /> : laeuft === f.id ? <span className="lade" /> : <span className="i" />}
+                {f.name}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

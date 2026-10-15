@@ -85,6 +85,10 @@ export class HttpApi implements PortalApi {
     return this.post<PortalKarte>('/anfrage', eingabe);
   }
 
+  wechseln(firmaId: string): Promise<Sitzung> {
+    return this.post<Sitzung>('/wechseln', { firma_id: firmaId });
+  }
+
   /** XHR instead of fetch, because only XHR reports upload progress. */
   hochladen(datei: File, fortschritt?: (anteil: number) => void): Promise<PortalDatei> {
     if (datei.size > MAX_UPLOAD_BYTES) return Promise.reject(new ApiFehler(zuGross(datei.name), 413));

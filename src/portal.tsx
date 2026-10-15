@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ApiFehler, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte } from './api/vertrag';
+import { ApiFehler, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte, type Sitzung } from './api/vertrag';
 import { useToast } from './components/Toast';
 import { letzterBesuch } from './lib/zuletzt';
 
@@ -39,6 +39,8 @@ interface PortalWert {
   anfrageOffen: boolean;
   setAnfrageOffen: (offen: boolean) => void;
   herunterladen: (d: PortalDatei) => Promise<void>;
+  /** Opens another client of the same person (switcher). */
+  wechseln: (firmaId: string) => Promise<void>;
   /** Shows the error, and logs out on an expired session. */
   fehler: (err: unknown) => void;
 }
@@ -51,8 +53,8 @@ export function usePortal(): PortalWert {
   return wert;
 }
 
-export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kundensicht; onAbmelden: (grund?: string) => void; children: ReactNode }) {
-  const { api, onAbmelden } = props;
+export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kundensicht; onAbmelden: (grund?: string) => void; onWechsel: (s: Sitzung) => void; children: ReactNode }) {
+  const { api, onAbmelden, onWechsel } = props;
   const toast = useToast();
   const [daten, setDaten] = useState(props.start);
   const [neuSeit] = useState(() => letzterBesuch(props.start.kunde.kuerzel || props.start.kunde.name));
@@ -172,6 +174,17 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
     [api, fehler],
   );
 
+  const wechseln = useCallback(
+    async (firmaId: string) => {
+      try {
+        onWechsel(await api.wechseln(firmaId));
+      } catch (err) {
+        fehler(err);
+      }
+    },
+    [api, onWechsel, fehler],
+  );
+
   const wert = useMemo<PortalWert>(
     () => ({
       api,
@@ -194,9 +207,10 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
       anfrageOffen,
       setAnfrageOffen,
       herunterladen,
+      wechseln,
       fehler,
     }),
-    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, herunterladen, fehler],
+    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, herunterladen, wechseln, fehler],
   );
 
   return <Kontext.Provider value={wert}>{props.children}</Kontext.Provider>;

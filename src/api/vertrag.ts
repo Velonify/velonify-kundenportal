@@ -54,6 +54,8 @@ export interface Kundensicht {
   ich: { vorname: string; nachname: string; email: string };
   /** Set when a Velonify team member looks at the portal from the hub (read only): their e-mail. */
   vorschau?: string | null;
+  /** All clients this person may open (same e-mail, a login at each), the current one included. */
+  firmen?: { id: string; name: string }[];
   team: string[];
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];
@@ -88,6 +90,8 @@ export interface PortalApi {
   kommentar(karteId: string, text: string): Promise<PortalKarte>;
   anfrage(eingabe: AnfrageEingabe): Promise<PortalKarte>;
   hochladen(datei: File, fortschritt?: (anteil: number) => void): Promise<PortalDatei>;
+  /** A session for another client of the same person. */
+  wechseln(firmaId: string): Promise<Sitzung>;
 }
 
 /** Answer of the API with a message for the user (German, du). `status` 401 means: log in again. */

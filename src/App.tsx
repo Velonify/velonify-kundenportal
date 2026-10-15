@@ -102,7 +102,19 @@ export function App() {
   }
   if (zustand.art === 'bereit') {
     return (
-      <PortalBereich api={api} demo={DEMO} start={zustand.daten} onAbmelden={abmelden}>
+      <PortalBereich
+        key={zustand.daten.kunde.name}
+        api={api}
+        demo={DEMO}
+        start={zustand.daten}
+        onAbmelden={abmelden}
+        onWechsel={(s) => {
+          speichereSitzung(s);
+          geheZu({ seite: 'start' }, true);
+          if (s.sitzung === sitzung) void laden();
+          else setSitzung(s.sitzung);
+        }}
+      >
         <Shell route={route} />
       </PortalBereich>
     );

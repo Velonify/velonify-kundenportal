@@ -14,6 +14,10 @@ const warte = (ms = 350) => new Promise((r) => setTimeout(r, ms));
 function startDaten(): Kundensicht {
   return {
     kunde: { name: 'Alpenglanz Kosmetik', kuerzel: 'ALP' },
+    firmen: [
+      { id: 'F-ALP', name: 'Alpenglanz Kosmetik' },
+      { id: 'F-BRG', name: 'Bergquelle Naturkost' },
+    ],
     slack: { channel: 'client-alp-general', url: 'https://slack.com/app_redirect?channel=client-alp-general' },
     ich: { vorname: 'Mara', nachname: 'Lindner', email: 'mara@alpenglanz.example' },
     team: ['Lukas', 'Julian'],
@@ -150,6 +154,15 @@ export class DemoApi implements PortalApi {
     };
     this.stand.karten.push(karte);
     return structuredClone(karte);
+  }
+
+  async wechseln(firmaId: string): Promise<{ sitzung: string; gueltig_bis: string }> {
+    await warte();
+    const ziel = this.stand.firmen?.find((f) => f.id === firmaId);
+    if (!ziel) throw new ApiFehler('Für diesen Kunden hast du keinen Zugang (mehr).', 403);
+    // The demo has one data set; switching only changes the name.
+    this.stand.kunde = { name: ziel.name, kuerzel: ziel.id };
+    return { sitzung: 'demo', gueltig_bis: new Date(Date.now() + 30 * 864e5).toISOString() };
   }
 
   async hochladen(datei: File, fortschritt?: (anteil: number) => void): Promise<PortalDatei> {

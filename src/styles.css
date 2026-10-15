@@ -378,3 +378,16 @@ button.gruppe-kopf:hover h2 { color: var(--bordeaux); }
 .vorschau-band b { color: var(--himmel); }
 .vorschau-band button { background: none; border: 1px solid rgba(255, 255, 255, .4); color: var(--on-dark); font-weight: 700; font-size: 12px; padding: 4px 10px; cursor: pointer; }
 .vorschau-band button:hover { border-color: #fff; }
+
+/* Client switcher for people who look after several clients */
+.marke-zeile { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.wechsler-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1px solid transparent; padding: 6px 8px 6px 10px; border-left: 1px solid var(--linie); font-weight: 600; font-size: 14px; color: var(--ink-2); cursor: pointer; max-width: 260px; }
+.wechsler-btn span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wechsler-btn:hover, .wechsler-btn[aria-expanded='true'] { color: var(--ink); border-color: var(--linie); }
+.menue-liste.links { left: 0; right: auto; }
+.menue-liste button[aria-current='true'] { color: var(--bordeaux); }
+.menue-liste .lade { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: dreh .7s linear infinite; flex: none; margin: 2px; }
+.menue-firmen { display: grid; border-bottom: 1px solid var(--linie); margin-bottom: 6px; padding-bottom: 6px; }
+.menue-firmen .unterkopf { padding: 4px 10px; }
+@media (max-width: 760px) { .firmenwechsler { display: none; } }
+@media (min-width: 761px) { .menue-firmen { display: none; } }

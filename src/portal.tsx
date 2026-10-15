@@ -17,6 +17,8 @@ export interface GeradeErledigt {
 interface PortalWert {
   api: PortalApi;
   demo: boolean;
+  /** Team preview from the hub: everything that changes something is hidden. */
+  nurLesen: boolean;
   daten: Kundensicht;
   /** ISO time of the previous visit in this browser ('' on the first). */
   neuSeit: string;
@@ -174,6 +176,7 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
     () => ({
       api,
       demo: props.demo,
+      nurLesen: !!daten.vorschau,
       daten,
       neuSeit,
       aktualisiert,

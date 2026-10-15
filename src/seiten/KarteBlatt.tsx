@@ -18,7 +18,7 @@ export function KarteBlatt({ karte, aendern, onClose }: { karte: PortalKarte; ae
   const [nachricht, setNachricht] = useState('');
   const [laeuft, setLaeuft] = useState<'' | 'frei' | 'aenderung' | 'kommentar'>('');
   const imUndo = p.gerade.find((g) => g.id === karte.id && g.wartet);
-  const offen = karte.phase === 'wartet' && !imUndo;
+  const offen = karte.phase === 'wartet' && !imUndo && !p.nurLesen;
   const fertig = karte.checkliste.filter((c) => c.erledigt).length;
 
   async function entscheide(entscheidung: 'freigegeben' | 'aenderung') {
@@ -144,7 +144,7 @@ export function KarteBlatt({ karte, aendern, onClose }: { karte: PortalKarte; ae
               </div>
             ))}
           </div>
-          {!offen && (
+          {!offen && !p.nurLesen && (
             <form className="form" onSubmit={schreibe}>
               <div className="feld">
                 <label htmlFor="b-kom">Nachricht{karte.zustaendig.length ? ` an ${karte.zustaendig.join(' und ')}` : ''}</label>

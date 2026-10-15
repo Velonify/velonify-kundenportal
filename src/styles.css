@@ -372,3 +372,9 @@ button.gruppe-kopf:hover h2 { color: var(--bordeaux); }
 .kontaktweg.haupt { background: var(--eis-hell); padding: 10px; margin: 0 0 4px; }
 .kontaktweg.haupt .av { background: var(--bordeaux); color: var(--on-dark); }
 .kontaktweg.haupt:hover { background: var(--eis); }
+
+/* Team preview from the hub */
+.vorschau-band { background: var(--espresso); color: var(--on-dark); font-size: 13px; padding: 8px 16px; display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; text-align: center; }
+.vorschau-band b { color: var(--himmel); }
+.vorschau-band button { background: none; border: 1px solid rgba(255, 255, 255, .4); color: var(--on-dark); font-weight: 700; font-size: 12px; padding: 4px 10px; cursor: pointer; }
+.vorschau-band button:hover { border-color: #fff; }

@@ -10,7 +10,8 @@ export type Route =
   | { seite: 'dateien' }
   | { seite: 'werkzeuge' }
   | { seite: 'utm' }
-  | { seite: 'anmelden'; token: string };
+  | { seite: 'anmelden'; token: string }
+  | { seite: 'vorschau'; token: string };
 
 export function leseRoute(hash: string): Route {
   const teile = hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
@@ -23,6 +24,8 @@ export function leseRoute(hash: string): Route {
       return teile[1] === 'utm' ? { seite: 'utm' } : { seite: 'werkzeuge' };
     case 'anmelden':
       return teile[1] ? { seite: 'anmelden', token: teile[1] } : { seite: 'start' };
+    case 'vorschau':
+      return teile[1] ? { seite: 'vorschau', token: teile[1] } : { seite: 'start' };
     default:
       return { seite: 'start' };
   }
@@ -38,6 +41,8 @@ export function pfadVon(route: Route): string {
       return '#/werkzeuge/utm';
     case 'anmelden':
       return `#/anmelden/${route.token}`;
+    case 'vorschau':
+      return `#/vorschau/${route.token}`;
     default:
       return `#/${route.seite}`;
   }

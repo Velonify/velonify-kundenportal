@@ -23,7 +23,7 @@ export function Shell({ route }: { route: Route }) {
   const p = usePortal();
   const { daten } = p;
   const offen = wartendeKarten(daten.karten).filter((k) => !p.gerade.some((g) => g.id === k.id)).length;
-  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'anmelden' ? 'start' : route.seite;
+  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'anmelden' || route.seite === 'vorschau' ? 'start' : route.seite;
 
   // Deep link to a card (#/projekt/<id>) opens its sheet.
   const deepLink = route.seite === 'projekt' ? route.karte : undefined;
@@ -48,6 +48,14 @@ export function Shell({ route }: { route: Route }) {
         Zum Inhalt springen
       </a>
       {p.demo && <div className="demo-band">Demo mit Beispieldaten · nichts davon wird gespeichert</div>}
+      {daten.vorschau && (
+        <div className="vorschau-band" role="status">
+          <span>
+            <b>Vorschau</b> als Velonify-Team ({daten.vorschau}): So sieht {daten.kunde.name} das Portal. Nur ansehen, Aktionen sind gesperrt.
+          </span>
+          <button type="button" onClick={() => { p.abmelden(); window.close(); }}>Vorschau beenden</button>
+        </div>
+      )}
       <header className="bar">
         <div className="bar-in">
           <a className="marke" href={pfadVon({ seite: 'start' })} aria-label={`Velonify · ${daten.kunde.name}`}>
@@ -67,10 +75,12 @@ export function Shell({ route }: { route: Route }) {
             ))}
           </nav>
           <span className="sp" />
-          <button className="btn btn-anfrage" type="button" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
-            <Icon name="plus" />
-            <span className="t">Neue Anfrage</span>
-          </button>
+          {!p.nurLesen && (
+            <button className="btn btn-anfrage" type="button" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
+              <Icon name="plus" />
+              <span className="t">Neue Anfrage</span>
+            </button>
+          )}
           <Menue />
         </div>
       </header>
@@ -98,7 +108,7 @@ export function Shell({ route }: { route: Route }) {
 
       {p.karteOffen && karte && <KarteBlatt karte={karte} aendern={p.karteOffen.aendern} onClose={schliesseKarte} />}
       {p.karteOffen && !karte && <KarteFehlt onClose={schliesseKarte} />}
-      {p.anfrageOffen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
+      {p.anfrageOffen && !p.nurLesen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
     </>
   );
 }

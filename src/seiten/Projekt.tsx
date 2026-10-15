@@ -5,7 +5,7 @@ import { usePortal } from '../portal';
 import { Projektstand } from './Bausteine';
 
 export function Projekt() {
-  const { daten, oeffneKarte, setAnfrageOffen } = usePortal();
+  const { daten, oeffneKarte, setAnfrageOffen, nurLesen } = usePortal();
   const [erledigtOffen, setErledigtOffen] = useState(false);
   const nach = (phase: PortalKarte['phase']) => daten.karten.filter((k) => k.phase === phase);
   const erledigt = nach('erledigt').sort((a, b) => b.erledigt_am.localeCompare(a.erledigt_am));
@@ -71,9 +71,9 @@ export function Projekt() {
           {offen === 0 && (
             <div className="alles-gut">
               Gerade ist nichts offen.{' '}
-              <button className="textlink" type="button" onClick={() => setAnfrageOffen(true)}>
+              {!nurLesen && <button className="textlink" type="button" onClick={() => setAnfrageOffen(true)}>
                 Neue Anfrage stellen
-              </button>
+              </button>}
             </div>
           )}
           {erledigt.length > 0 && (

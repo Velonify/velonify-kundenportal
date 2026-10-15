@@ -32,7 +32,7 @@ export function Start() {
         <div className="kopf">
           <h1>
             {begruessung()}
-            {daten.ich.vorname ? ` ${daten.ich.vorname}` : ''}
+            {daten.ich.vorname && !daten.vorschau ? ` ${daten.ich.vorname}` : ''}
           </h1>
           <p>{satz}</p>
         </div>
@@ -92,13 +92,17 @@ function TodoKarte({ karte }: { karte: PortalKarte }) {
         {vorschau && <p className="warum">{vorschau}</p>}
       </div>
       <div className="aktionen">
-        <button className="btn" type="button" onClick={() => p.freigeben(karte)}>
-          <Icon name="check" />
-          Freigeben
-        </button>
-        <button className="btn zweit" type="button" onClick={() => p.oeffneKarte(karte.id, true)}>
-          Änderung wünschen
-        </button>
+        {!p.nurLesen && (
+          <>
+            <button className="btn" type="button" onClick={() => p.freigeben(karte)}>
+              <Icon name="check" />
+              Freigeben
+            </button>
+            <button className="btn zweit" type="button" onClick={() => p.oeffneKarte(karte.id, true)}>
+              Änderung wünschen
+            </button>
+          </>
+        )}
         <button className="btn leise" type="button" onClick={() => p.oeffneKarte(karte.id)}>
           Details{karte.kommentare.length > 0 ? ` · ${karte.kommentare.length}` : ''}
         </button>

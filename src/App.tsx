@@ -21,7 +21,17 @@ export function App() {
   const route = useRoute();
   const [sitzung, setSitzung] = useState(() => holeSitzung());
   const api: PortalApi = useMemo(() => (DEMO ? new DemoApi() : new HttpApi(API_URL, () => holeSitzung(), speichereSitzung)), []);
-  const [zustand, setZustand] = useState<Zustand>(() => (route.seite === 'anmelden' ? { art: 'einloesen' } : sitzung ? { art: 'laden' } : { art: 'login' }));
+  const [zustand, setZustand] = useState<Zustand>(() => (route.seite === 'anmelden' ? { art: 'einloesen' } : sitzung || route.seite === 'vorschau' ? { art: 'laden' } : { art: 'login' }));
+
+  // Team preview from the hub ("Als Kunde ansehen"): the session comes in the address and replaces any other.
+  const vorschauToken = route.seite === 'vorschau' ? route.token : null;
+  useEffect(() => {
+    if (!vorschauToken) return;
+    const s = { sitzung: vorschauToken, gueltig_bis: new Date(Date.now() + 8 * 3_600_000).toISOString() };
+    speichereSitzung(s);
+    setSitzung(s.sitzung);
+    geheZu({ seite: 'start' }, true);
+  }, [vorschauToken]);
 
   const abmelden = useCallback((hinweis?: string) => {
     speichereSitzung(null);
@@ -67,11 +77,11 @@ export function App() {
   }, [token, api, laden]);
 
   useEffect(() => {
-    if (sitzung && !token) void laden();
-  }, [sitzung, token, laden]);
+    if (sitzung && !token && !vorschauToken) void laden();
+  }, [sitzung, token, vorschauToken, laden]);
 
   useEffect(() => {
-    document.title = zustand.art === 'bereit' ? `${zustand.daten.kunde.name} · Velonify` : 'Velonify Kundenportal';
+    document.title = zustand.art === 'bereit' ? `${zustand.daten.vorschau ? 'Vorschau: ' : ''}${zustand.daten.kunde.name} · Velonify` : 'Velonify Kundenportal';
   }, [zustand]);
 
   if (zustand.art === 'login') {

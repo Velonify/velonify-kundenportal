@@ -52,6 +52,8 @@ export interface Kundensicht {
   /** The client's Slack channel; the preferred way to reach the team. Null (or missing on an older function) without one. */
   slack?: { channel: string; url: string } | null;
   ich: { vorname: string; nachname: string; email: string };
+  /** Set when a Velonify team member looks at the portal from the hub (read only): their e-mail. */
+  vorschau?: string | null;
   team: string[];
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];

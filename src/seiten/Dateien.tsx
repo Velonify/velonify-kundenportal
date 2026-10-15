@@ -69,7 +69,7 @@ export function Dateien() {
           <p>Was wir euch schicken und was ihr uns schickt, neueste zuerst.</p>
         </div>
 
-        {(
+        {!p.nurLesen && (
           <label
             className={`dropzone${drueber ? ' drueber' : ''}`}
             onDragOver={(e) => {

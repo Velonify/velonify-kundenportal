@@ -1,6 +1,6 @@
 import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte, type Sitzung } from './vertrag';
 
-const VERBINDUNG = 'Keine Verbindung. Prüf dein Internet und versuch es noch einmal.';
+const VERBINDUNG = 'Wir erreichen den Server gerade nicht. Prüf deine Verbindung oder versuch es in ein paar Minuten noch einmal.';
 
 /** The real API: the Cloud Function behind `VITE_PORTAL_API_URL`, with the session as Bearer token. */
 export class HttpApi implements PortalApi {

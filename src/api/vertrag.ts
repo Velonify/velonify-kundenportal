@@ -120,6 +120,30 @@ export interface PortalEinstellungen {
   kanal_hinweise: Kanal;
 }
 
+/** Content of a monthly report (see monatsbericht.ts in the hub repo). */
+export interface BerichtDaten {
+  /** Numbers of the calendar month against the month before; PageSpeed is the last measurement. */
+  zahlen: TrackingDaten;
+  erledigt: { titel: string; datum: string }[];
+  meilensteine: { titel: string; datum: string }[];
+  naechstes: { titel: string; art: 'meilenstein' | 'karte'; datum: string }[];
+  stand_am: string;
+}
+
+export interface PortalBericht {
+  /** YYYY-MM */
+  monat: string;
+  /** e.g. "Oktober 2026" */
+  titel: string;
+  /** Drafts only reach the team access. */
+  status: 'entwurf' | 'freigegeben';
+  kommentar: string;
+  /** First name of the team member who released it. */
+  von: string;
+  freigegeben_am: string;
+  daten: BerichtDaten;
+}
+
 export interface Kundensicht {
   kunde: { name: string; kuerzel: string };
   /** The client's Slack channel; the preferred way to reach the team. Null (or missing on an older function) without one. */
@@ -136,6 +160,8 @@ export interface Kundensicht {
   einstellungen?: PortalEinstellungen | null;
   /** Numbers of the tracking hub; null when not released (or missing on an older function). */
   zahlen?: { stand_am: string; daten: TrackingDaten; sichtbar_kunde: boolean } | null;
+  /** Monthly reports, newest first (missing on an older function). */
+  berichte?: PortalBericht[];
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];
   /** `art`: update | meilenstein | hinweis; `datum` YYYY-MM-DD */

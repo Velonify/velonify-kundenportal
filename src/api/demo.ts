@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
 import { zuGross } from './client';
 
 /** Demo client for local work and previews without the function. Made-up company, dates relative to today. */
@@ -10,6 +10,82 @@ const tag = (versatz: number) => {
 };
 const zeit = (versatz: number, stunde: number) => `${tag(versatz)}T${String(stunde).padStart(2, '0')}:15:00.000Z`;
 const warte = (ms = 350) => new Promise((r) => setTimeout(r, ms));
+
+const MONATE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+
+/** Two released reports: last month and the one before. */
+function demoBerichte(): PortalBericht[] {
+  const heute = new Date();
+  return [1, 2].map((zurueck, i) => {
+    const anfang = new Date(heute.getFullYear(), heute.getMonth() - zurueck, 1);
+    const tage = new Date(anfang.getFullYear(), anfang.getMonth() + 1, 0).getDate();
+    const m = `${anfang.getFullYear()}-${String(anfang.getMonth() + 1).padStart(2, '0')}`;
+    const vorher = new Date(anfang.getFullYear(), anfang.getMonth() - 1, 1);
+    const vm = `${vorher.getFullYear()}-${String(vorher.getMonth() + 1).padStart(2, '0')}`;
+    const vorherTage = new Date(vorher.getFullYear(), vorher.getMonth() + 1, 0).getDate();
+    const zeitraum = { von: `${m}-01`, bis: `${m}-${tage}`, vorher_von: `${vm}-01`, vorher_bis: `${vm}-${vorherTage}` };
+    const f = i === 0 ? 1 : 0.9;
+    const welle = (t: number) => 1 + 0.22 * Math.sin(t / 2.3) + t / 120;
+    const tagVon = (t: number) => `${m}-${String(t + 1).padStart(2, '0')}`;
+    return {
+      monat: m,
+      titel: `${MONATE[anfang.getMonth()]} ${anfang.getFullYear()}`,
+      status: 'freigegeben',
+      kommentar:
+        i === 0
+          ? 'Starker Monat: Der Umsatz liegt 15 % über dem Vormonat, vor allem durch die neuen Produktseiten und die organische Suche. Mobil ist der Shop noch zu langsam – das gehen wir im nächsten Monat vor der Black Week an.\n\nUnsere Empfehlung: Winterkollektion früh im Newsletter anteasern.'
+          : 'Solider Monat. Die Migration ist abgeschlossen, Tracking läuft sauber auf GA4.',
+      von: 'Lukas',
+      freigegeben_am: `${tag(-heute.getDate() + 3 - 30 * i)}T09:00:00.000Z`,
+      daten: {
+        zahlen: {
+          ga4: {
+            nutzer: Math.round(9840 * f), sitzungen: Math.round(13120 * f), umsatz: Math.round(48210 * f), transaktionen: Math.round(312 * f), conversion_rate: 312 / 13120,
+            vorher: { nutzer: Math.round(8910 * f), sitzungen: Math.round(12030 * f), umsatz: Math.round(41980 * f), transaktionen: Math.round(268 * f), conversion_rate: 268 / 12030 },
+            zeitraum, waehrung: 'EUR',
+            kanaele: [
+              { name: 'Organic Search', sitzungen: 4980, umsatz: 17400 },
+              { name: 'Paid Social', sitzungen: 3120, umsatz: 11900 },
+              { name: 'Direct', sitzungen: 2210, umsatz: 9800 },
+              { name: 'Email', sitzungen: 1490, umsatz: 6700 },
+            ],
+            verlauf: Array.from({ length: tage }, (_, t) => ({ tag: tagVon(t), sitzungen: Math.round(420 * f * welle(t)), umsatz: 0 })),
+          },
+          gsc: {
+            klicks: Math.round(5210 * f), impressionen: Math.round(184300 * f), ctr: 5210 / 184300, position: 14.2,
+            vorher: { klicks: Math.round(4620 * f), impressionen: Math.round(171900 * f), ctr: 4620 / 171900, position: 15.8 },
+            zeitraum,
+            suchanfragen: [
+              { suchanfrage: 'naturkosmetik gesichtspflege', klicks: 410, impressionen: 9800, position: 3.4 },
+              { suchanfrage: 'alpenglanz', klicks: 380, impressionen: 1200, position: 1.1 },
+            ],
+            seiten: [],
+            verlauf: Array.from({ length: tage }, (_, t) => ({ tag: tagVon(t), klicks: Math.round(165 * f * welle(t)), impressionen: 5900 })),
+          },
+          pagespeed: {
+            url: 'https://alpenglanz.example/',
+            mobil: { score: 58, lcp_ms: 3400, cls: 0.04, inp_ms: 240, quelle: 'feld' },
+            desktop: { score: 92, lcp_ms: 1300, cls: 0.02, inp_ms: 90, quelle: 'feld' },
+          },
+        },
+        erledigt: i === 0
+          ? [
+              { titel: 'Neues Produkt „Ringelblumen-Balsam“ angelegt', datum: `${m}-06` },
+              { titel: 'Meta-Pixel und Conversion API', datum: `${m}-14` },
+              { titel: 'Hinweis „noch X € bis zum Gratis-Versand“ im Warenkorb', datum: `${m}-27` },
+            ]
+          : [{ titel: 'Daten aus dem alten Shop übernommen', datum: `${m}-12` }],
+        meilensteine: i === 0 ? [{ titel: 'Tracking', datum: `${m}-20` }] : [{ titel: 'Migration', datum: `${m}-25` }],
+        naechstes: [
+          { titel: 'Design & Inhalte', art: 'meilenstein', datum: tag(17) },
+          { titel: 'Black-Week-Landingpage', art: 'karte', datum: tag(23) },
+          { titel: 'Filter „Hauttyp“ auf den Kategorieseiten', art: 'karte', datum: '' },
+        ],
+        stand_am: `${tag(-heute.getDate() + 2)}T06:00:00.000Z`,
+      },
+    };
+  });
+}
 
 function startDaten(): Kundensicht {
   return {
@@ -105,6 +181,7 @@ function startDaten(): Kundensicht {
         },
       },
     },
+    berichte: demoBerichte(),
     einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
     news: [

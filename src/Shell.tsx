@@ -51,9 +51,9 @@ export function Shell({ route }: { route: Route }) {
       {daten.vorschau && (
         <div className="vorschau-band" role="status">
           <span>
-            <b>Vorschau</b> als Velonify-Team ({daten.vorschau}): So sieht {daten.kunde.name} das Portal. Nur ansehen, Aktionen sind gesperrt.
+            <b>Team-Zugang</b> ({daten.vorschau}): Portal von {daten.kunde.name} mit allen Funktionen. Was du hier tust, wird als Velonify gespeichert.
           </span>
-          <button type="button" onClick={() => { p.abmelden(); window.close(); }}>Vorschau beenden</button>
+          <button type="button" onClick={() => { p.abmelden(); window.close(); }}>Team-Zugang beenden</button>
         </div>
       )}
       <header className="bar">
@@ -78,12 +78,10 @@ export function Shell({ route }: { route: Route }) {
             ))}
           </nav>
           <span className="sp" />
-          {!p.nurLesen && (
-            <button className="btn btn-anfrage" type="button" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
-              <Icon name="plus" />
-              <span className="t">Neue Anfrage</span>
-            </button>
-          )}
+          <button className="btn btn-anfrage" type="button" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
+            <Icon name="plus" />
+            <span className="t">Neue Anfrage</span>
+          </button>
           <Menue />
         </div>
       </header>
@@ -111,7 +109,7 @@ export function Shell({ route }: { route: Route }) {
 
       {p.karteOffen && karte && <KarteBlatt karte={karte} aendern={p.karteOffen.aendern} onClose={schliesseKarte} />}
       {p.karteOffen && !karte && <KarteFehlt onClose={schliesseKarte} />}
-      {p.anfrageOffen && !p.nurLesen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
+      {p.anfrageOffen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
     </>
   );
 }

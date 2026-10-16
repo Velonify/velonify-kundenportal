@@ -81,7 +81,7 @@ export function App() {
   }, [sitzung, token, vorschauToken, laden]);
 
   useEffect(() => {
-    document.title = zustand.art === 'bereit' ? `${zustand.daten.vorschau ? 'Vorschau: ' : ''}${zustand.daten.kunde.name} · Velonify` : 'Velonify Kundenportal';
+    document.title = zustand.art === 'bereit' ? `${zustand.daten.vorschau ? 'Team: ' : ''}${zustand.daten.kunde.name} · Velonify` : 'Velonify Kundenportal';
   }, [zustand]);
 
   if (zustand.art === 'login') {

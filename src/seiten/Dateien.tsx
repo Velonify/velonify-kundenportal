@@ -69,25 +69,23 @@ export function Dateien() {
           <p>Was wir euch schicken und was ihr uns schickt, neueste zuerst.</p>
         </div>
 
-        {!p.nurLesen && (
-          <label
-            className={`dropzone${drueber ? ' drueber' : ''}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDrueber(true);
-            }}
-            onDragLeave={() => setDrueber(false)}
-            onDrop={drop}
-          >
-            <span className="box"><Icon name="hoch" /></span>
-            <span>
-              <b>Datei an Velonify schicken</b>
-              <br />
-              <span className="muted klein">hierher ziehen oder klicken · bis 25 MB je Datei, größere bitte als Link per Anfrage</span>
-            </span>
-            <input ref={eingabe} className="sr" type="file" multiple onChange={(e) => hochladen(e.target.files)} />
-          </label>
-        )}
+        <label
+          className={`dropzone${drueber ? ' drueber' : ''}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDrueber(true);
+          }}
+          onDragLeave={() => setDrueber(false)}
+          onDrop={drop}
+        >
+          <span className="box"><Icon name="hoch" /></span>
+          <span>
+            <b>Datei an Velonify schicken</b>
+            <br />
+            <span className="muted klein">hierher ziehen oder klicken · bis 25 MB je Datei, größere bitte als Link per Anfrage</span>
+          </span>
+          <input ref={eingabe} className="sr" type="file" multiple onChange={(e) => hochladen(e.target.files)} />
+        </label>
 
         <div className="block">
           <div className="filter" role="group" aria-label="Dateien filtern">

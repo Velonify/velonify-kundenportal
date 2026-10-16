@@ -70,6 +70,7 @@ function startDaten(): Kundensicht {
     ],
     news: [
       { id: 'n1', art: 'meilenstein', titel: 'Tracking ist komplett', text: 'Ab jetzt sehen wir, welche Kampagne welchen Umsatz bringt.', datum: tag(-1) },
+      { id: 'n3', art: 'update', titel: 'Willkommen im Kundenportal', text: 'Schön, dass ihr da seid! Hier findet ihr ab jetzt alles zu unserem Projekt an einem Ort.\n\nUnter „Für dich zu tun“ landet, was eure Freigabe braucht. Im Projekt seht ihr, woran wir gerade arbeiten und was als Nächstes kommt. Dateien von uns und von euch liegen unter „Dateien“.\n\nNeue Wünsche schickt ihr über „Neue Anfrage“ oben rechts. Bei Fragen erreicht ihr uns jederzeit im Slack-Channel oder unter https://velonify.de/kontakt.', datum: tag(-12) },
       { id: 'n2', art: 'hinweis', titel: 'Shopify erhöht Gebühren für Drittanbieter-Zahlungen', text: 'Betrifft euch nicht, ihr nutzt Shopify Payments.', datum: tag(-9) },
     ],
     links: [

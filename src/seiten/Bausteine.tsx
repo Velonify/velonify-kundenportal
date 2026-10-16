@@ -1,4 +1,5 @@
 import type { Kundensicht } from '../api/vertrag';
+import { Text } from '../components/Text';
 import { Icon, type IconName } from '../components/Icon';
 import { baueFeed, gruppiereFeed, initialen, projektstand, type FeedArt } from '../lib/ansicht';
 import { datumKurz, datumRelativ, uhrzeit, tagVon } from '../lib/datum';
@@ -49,7 +50,9 @@ const SYMBOL: Record<FeedArt, IconName> = { meilenstein: 'flagge', update: 'info
 export function Feed({ max }: { max: number }) {
   const { daten, neuSeit, oeffneKarte, herunterladen } = usePortal();
   const [alle, setAlle] = useState(false);
+  const [offen, setOffen] = useState<Set<string>>(new Set());
   const eintraege = baueFeed(daten);
+  const umschalten = (key: string) => setOffen((alt) => { const neu = new Set(alt); if (neu.has(key)) neu.delete(key); else neu.add(key); return neu; });
   const sichtbar = alle ? eintraege : eintraege.slice(0, max);
   if (eintraege.length === 0) {
     return <div className="feed"><p className="leer">Hier erscheint, was im Projekt passiert: Neuigkeiten, Dateien von uns und erledigte Aufgaben.</p></div>;
@@ -60,6 +63,9 @@ export function Feed({ max }: { max: number }) {
         <div key={g.titel}>
           <div className="tag-kopf">{g.titel}</div>
           {g.eintraege.map((e) => {
+            // Only news that the two-line preview cuts off.
+            const aufklappbar = e.key.startsWith('n-') && (e.detail.length > 110 || e.detail.includes('\n'));
+            const istOffen = aufklappbar && offen.has(e.key);
             const inhalt = (
               <>
                 <span className={`sym ${e.art}`}><Icon name={SYMBOL[e.art]} /></span>
@@ -70,11 +76,24 @@ export function Feed({ max }: { max: number }) {
                     {e.was}
                     {istNeu(e.datum, neuSeit) && <> <span className="pill himmel">Neu</span></>}
                   </span>
-                  {e.detail && <span className="detail" style={{ display: '-webkit-box' }}>{e.art === 'antwort' ? `„${e.detail}“` : e.detail}</span>}
+                  {istOffen ? (
+                    <Text text={e.detail} className="detail offen" />
+                  ) : (
+                    e.detail && <span className="detail" style={{ display: '-webkit-box' }}>{e.art === 'antwort' ? `„${e.detail}“` : e.detail}</span>
+                  )}
+                  {aufklappbar && <span className="weiter">{istOffen ? 'Weniger' : 'Ganz lesen'}</span>}
                 </span>
                 <span className="zeit">{uhrzeit(e.datum) && tagVon(e.datum) === tagVon(new Date()) ? uhrzeit(e.datum) : datumRelativ(e.datum)}</span>
               </>
             );
+            if (aufklappbar) {
+              // Links inside the opened text must stay clickable, so the opened entry is no button.
+              return istOffen ? (
+                <div key={e.key} className="eintrag offen" onClick={(ev) => { if (!(ev.target as HTMLElement).closest('a')) umschalten(e.key); }}>{inhalt}</div>
+              ) : (
+                <button key={e.key} type="button" className="eintrag" aria-expanded={false} onClick={() => umschalten(e.key)}>{inhalt}</button>
+              );
+            }
             if (e.karte) return <button key={e.key} type="button" className="eintrag" onClick={() => oeffneKarte(e.karte!)}>{inhalt}</button>;
             if (e.datei) {
               const datei = daten.dateien.find((d) => d.id === e.datei);

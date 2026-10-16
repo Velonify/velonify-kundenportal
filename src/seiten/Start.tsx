@@ -92,17 +92,13 @@ function TodoKarte({ karte }: { karte: PortalKarte }) {
         {vorschau && <p className="warum">{vorschau}</p>}
       </div>
       <div className="aktionen">
-        {!p.nurLesen && (
-          <>
-            <button className="btn" type="button" onClick={() => p.freigeben(karte)}>
-              <Icon name="check" />
-              Freigeben
-            </button>
-            <button className="btn zweit" type="button" onClick={() => p.oeffneKarte(karte.id, true)}>
-              Änderung wünschen
-            </button>
-          </>
-        )}
+        <button className="btn" type="button" onClick={() => p.freigeben(karte)}>
+          <Icon name="check" />
+          Freigeben
+        </button>
+        <button className="btn zweit" type="button" onClick={() => p.oeffneKarte(karte.id, true)}>
+          Änderung wünschen
+        </button>
         <button className="btn leise" type="button" onClick={() => p.oeffneKarte(karte.id)}>
           Details{karte.kommentare.length > 0 ? ` · ${karte.kommentare.length}` : ''}
         </button>

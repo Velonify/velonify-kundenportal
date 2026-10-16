@@ -3,6 +3,7 @@ import { Icon, Logo, type IconName } from './components/Icon';
 import { KarteBlatt } from './seiten/KarteBlatt';
 import { AnfrageBlatt } from './seiten/AnfrageBlatt';
 import { TerminBlatt } from './seiten/TerminBlatt';
+import { FeedbackBlatt } from './seiten/Feedback';
 import { Start } from './seiten/Start';
 import { Projekt } from './seiten/Projekt';
 import { Dateien } from './seiten/Dateien';
@@ -119,6 +120,7 @@ export function Shell({ route }: { route: Route }) {
       {p.karteOffen && karte && <KarteBlatt karte={karte} aendern={p.karteOffen.aendern} onClose={schliesseKarte} />}
       {p.karteOffen && !karte && <KarteFehlt onClose={schliesseKarte} />}
       {p.anfrageOffen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
+      {p.feedbackOffen && <FeedbackBlatt onClose={() => p.setFeedbackOffen(false)} />}
       {p.terminMit && daten.termine?.[p.terminMit] && <TerminBlatt person={p.terminMit} link={daten.termine[p.terminMit]} onClose={() => p.setTerminMit(null)} />}
     </>
   );
@@ -136,7 +138,7 @@ function KarteFehlt({ onClose }: { onClose: () => void }) {
 }
 
 function Menue() {
-  const { daten, abmelden, wechseln, setTerminMit } = usePortal();
+  const { daten, abmelden, wechseln, setTerminMit, setFeedbackOffen } = usePortal();
   const [offen, setOffen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const name = `${daten.ich.vorname} ${daten.ich.nachname}`.trim() || daten.ich.email;
@@ -195,6 +197,10 @@ function Menue() {
               {Object.keys(daten.termine ?? {}).length > 1 ? `Termin mit ${person}` : 'Termin buchen'}
             </button>
           ))}
+          <button type="button" onClick={() => { setOffen(false); setFeedbackOffen(true); }}>
+            <Icon name="stern" />
+            Feedback an Velonify
+          </button>
           <a href={pfadVon({ seite: 'einstellungen' })} onClick={() => setOffen(false)}>
             <Icon name="glocke" />
             Benachrichtigungen

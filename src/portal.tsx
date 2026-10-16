@@ -36,6 +36,11 @@ interface PortalWert {
   schliesseKarte: () => void;
   anfrageOffen: boolean;
   setAnfrageOffen: (offen: boolean) => void;
+  /** Remembers a rating (key "anlass:bezug_id") so the question disappears without reloading. */
+  merkeFeedback: (schluessel: string) => void;
+  /** Free feedback sheet ("Feedback an Velonify"). */
+  feedbackOffen: boolean;
+  setFeedbackOffen: (offen: boolean) => void;
   /** Team member whose booking page is open ("Termin buchen"), or null. */
   terminMit: string | null;
   setTerminMit: (person: string | null) => void;
@@ -63,6 +68,13 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
   const [karteOffen, setKarteOffen] = useState<{ id: string; aendern?: boolean } | null>(null);
   const [anfrageOffen, setAnfrageOffen] = useState(false);
   const [terminMit, setTerminMit] = useState<string | null>(null);
+  const [feedbackOffen, setFeedbackOffen] = useState(false);
+  const merkeFeedback = useCallback((schluessel: string) => {
+    setDaten((d) => {
+      const fb = d.feedback ?? { gegeben: [], offen: [], bewertung_url: '' };
+      return { ...d, feedback: { ...fb, gegeben: [...fb.gegeben, schluessel], offen: fb.offen.filter((o) => `${o.anlass}:${o.bezug_id}` !== schluessel) } };
+    });
+  }, []);
   const [aktualisiert, setAktualisiert] = useState(false);
   const timer = useRef(new Map<string, { t: ReturnType<typeof setTimeout>; senden: () => void }>());
 
@@ -209,11 +221,14 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
       setAnfrageOffen,
       terminMit,
       setTerminMit,
+      merkeFeedback,
+      feedbackOffen,
+      setFeedbackOffen,
       herunterladen,
       wechseln,
       fehler,
     }),
-    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, terminMit, herunterladen, wechseln, fehler],
+    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, terminMit, merkeFeedback, feedbackOffen, herunterladen, wechseln, fehler],
   );
 
   return <Kontext.Provider value={wert}>{props.children}</Kontext.Provider>;

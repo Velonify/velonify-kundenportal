@@ -162,6 +162,11 @@ export interface Kundensicht {
   einstellungen?: PortalEinstellungen | null;
   /** Numbers of the tracking hub; null when not released (or missing on an older function). */
   zahlen?: { stand_am: string; daten: TrackingDaten; sichtbar_kunde: boolean } | null;
+  /**
+   * Feedback: keys ("bericht:2026-10", "karte:T-1", "meilenstein:KM-1") rated already, finished milestones to ask
+   * about and the Google review link offered at 5 stars (missing on an older function).
+   */
+  feedback?: { gegeben: string[]; offen: { anlass: 'meilenstein'; bezug_id: string; titel: string }[]; bewertung_url: string };
   /** Monthly reports, newest first (missing on an older function). */
   berichte?: PortalBericht[];
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
@@ -172,6 +177,19 @@ export interface Kundensicht {
   links: { titel: string; url: string; beschreibung: string; art: string }[];
   werkzeuge: string[];
   dateien: PortalDatei[];
+}
+
+export type FeedbackAnlass = 'bericht' | 'meilenstein' | 'karte' | 'frei';
+
+export interface FeedbackEingabe {
+  anlass: FeedbackAnlass;
+  /** Month, milestone id or card id; empty for free feedback */
+  bezug_id: string;
+  /** 1–5; null only for free feedback */
+  sterne: number | null;
+  text: string;
+  /** May we quote the comment (offered at 5 stars) */
+  zitat_ok: boolean;
 }
 
 export interface Sitzung {
@@ -200,6 +218,7 @@ export interface PortalApi {
   /** A session for another client of the same person. */
   wechseln(firmaId: string): Promise<Sitzung>;
   einstellungen(e: PortalEinstellungen): Promise<PortalEinstellungen>;
+  feedback(e: FeedbackEingabe): Promise<{ ok: true }>;
 }
 
 /** Answer of the API with a message for the user (German, du). `status` 401 means: log in again. */

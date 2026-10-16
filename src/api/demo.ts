@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
 import { zuGross } from './client';
 
 /** Demo client for local work and previews without the function. Made-up company, dates relative to today. */
@@ -182,6 +182,7 @@ function startDaten(): Kundensicht {
       },
     },
     berichte: demoBerichte(),
+    feedback: { gegeben: [], offen: [{ anlass: 'meilenstein', bezug_id: 'KM-TRACKING', titel: 'Tracking' }], bewertung_url: 'https://example.com/google-bewertung' },
     einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
     termine: { Lukas: 'https://example.com/termin-buchen' },
@@ -278,6 +279,17 @@ export class DemoApi implements PortalApi {
     await warte();
     this.stand.einstellungen = { ...e };
     return { ...e };
+  }
+
+  async feedback(e: FeedbackEingabe): Promise<{ ok: true }> {
+    await warte();
+    const fb = this.stand.feedback ?? { gegeben: [], offen: [], bewertung_url: '' };
+    if (e.anlass !== 'frei') {
+      const schluessel = `${e.anlass}:${e.bezug_id}`;
+      if (fb.gegeben.includes(schluessel)) throw new ApiFehler('Dazu hast du schon eine Bewertung abgegeben. Danke!', 409);
+      this.stand.feedback = { ...fb, gegeben: [...fb.gegeben, schluessel], offen: fb.offen.filter((o) => `${o.anlass}:${o.bezug_id}` !== schluessel) };
+    }
+    return { ok: true };
   }
 
   async wechseln(firmaId: string): Promise<{ sitzung: string; gueltig_bis: string }> {

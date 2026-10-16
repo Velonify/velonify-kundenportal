@@ -184,6 +184,7 @@ function startDaten(): Kundensicht {
     berichte: demoBerichte(),
     einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
+    termine: { Lukas: 'https://example.com/termin-buchen' },
     news: [
       { id: 'n1', art: 'meilenstein', titel: 'Tracking ist komplett', text: 'Ab jetzt sehen wir, welche Kampagne welchen Umsatz bringt.', datum: tag(-1) },
       { id: 'n3', art: 'update', titel: 'Willkommen im Kundenportal', text: 'Schön, dass ihr da seid! Hier findet ihr ab jetzt alles zu unserem Projekt an einem Ort.\n\nUnter „Für dich zu tun“ landet, was eure Freigabe braucht. Im Projekt seht ihr, woran wir gerade arbeiten und was als Nächstes kommt. Dateien von uns und von euch liegen unter „Dateien“.\n\nNeue Wünsche schickt ihr über „Neue Anfrage“ oben rechts. Bei Fragen erreicht ihr uns jederzeit im Slack-Channel oder unter https://velonify.de/kontakt.', datum: tag(-12) },

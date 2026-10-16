@@ -116,7 +116,7 @@ export function Feed({ max }: { max: number }) {
 
 /** Side column: the team with the emergency number, and quick links to tools and the client's links. */
 export function Neben() {
-  const { daten } = usePortal();
+  const { daten, setTerminMit } = usePortal();
   const werkzeuge = daten.werkzeuge.filter((w) => WERKZEUGE[w]?.seite);
   const links = daten.links.slice(0, 6);
   return (
@@ -129,6 +129,12 @@ export function Neben() {
             <div>
               <strong>{name}</strong>
               {daten.telefone?.[name] && <a href={`tel:${daten.telefone[name].replace(/[^\d+]/g, '')}`}>{daten.telefone[name]}</a>}
+              {daten.termine?.[name] && (
+                <button type="button" className="termin-link" onClick={() => setTerminMit(name)}>
+                  <Icon name="kalender" />
+                  Termin buchen
+                </button>
+              )}
             </div>
           </div>
         ))}

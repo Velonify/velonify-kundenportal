@@ -183,6 +183,16 @@ button.eintrag:focus-visible { outline: 2px solid var(--bordeaux); outline-offse
 .person a { text-decoration: none; font-size: 13px; color: var(--ink-2); }
 .person a:hover { color: var(--bordeaux); }
 .person a:hover strong { color: var(--bordeaux); }
+.person > div { display: grid; gap: 1px; min-width: 0; }
+.termin-link { display: inline-flex; align-items: center; gap: 5px; background: none; border: 0; padding: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--bordeaux); margin-top: 3px; cursor: pointer; justify-self: start; }
+.termin-link .i { width: 15px; height: 15px; }
+.termin-link:hover { text-decoration: underline; }
+.blatt.breit { width: min(760px, 100%); }
+.termin-rahmen { flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; }
+.termin-rahmen iframe { flex: 1; width: 100%; min-height: 560px; border: 0; background: var(--flaeche); }
+.termin-laedt { position: absolute; inset: 0 0 auto; padding: 28px 24px; display: flex; gap: 10px; align-items: center; color: var(--ink-2); font-size: 14px; }
+.termin-laedt .lade { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: dreh .7s linear infinite; }
+.termin-fuss { padding: 10px 24px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--linie); }
 .notfall { border-top: 1px solid var(--linie); padding-top: 12px; }
 .schnell { display: grid; gap: 2px; }
 .schnell a, .schnell button { all: unset; box-sizing: border-box; display: flex; gap: 10px; align-items: center; padding: 8px 6px; margin: 0 -6px; cursor: pointer; font-size: 14px; font-weight: 600; }

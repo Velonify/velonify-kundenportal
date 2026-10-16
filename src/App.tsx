@@ -7,7 +7,7 @@ import { Shell } from './Shell';
 import { PortalBereich } from './portal';
 import { Login } from './seiten/Login';
 import { API_URL, DEMO } from './konfig';
-import { geheZu, useRoute } from './lib/route';
+import { geheZu, leseRoute, useRoute } from './lib/route';
 import { holeSitzung, speichereSitzung } from './lib/sitzung';
 
 type Zustand =
@@ -25,13 +25,16 @@ export function App() {
 
   // Team preview from the hub ("Als Kunde ansehen"): the session comes in the address and replaces any other.
   const vorschauToken = route.seite === 'vorschau' ? route.token : null;
+  const vorschauZiel = route.seite === 'vorschau' ? route.ziel : undefined;
   useEffect(() => {
     if (!vorschauToken) return;
     const s = { sitzung: vorschauToken, gueltig_bis: new Date(Date.now() + 8 * 3_600_000).toISOString() };
     speichereSitzung(s);
     setSitzung(s.sitzung);
-    geheZu({ seite: 'start' }, true);
-  }, [vorschauToken]);
+    // The hub may ask for a page right away ("Im Portal ansehen" on a monthly report).
+    const ziel = vorschauZiel ? leseRoute(`#/${vorschauZiel}`) : null;
+    geheZu(ziel && ziel.seite !== 'vorschau' && ziel.seite !== 'anmelden' ? ziel : { seite: 'start' }, true);
+  }, [vorschauToken, vorschauZiel]);
 
   const abmelden = useCallback((hinweis?: string) => {
     speichereSitzung(null);

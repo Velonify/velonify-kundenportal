@@ -24,6 +24,7 @@ const PFADE = {
   muell: 'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13',
   slack: 'M9 3v18M15 3v18M3 9h18M3 15h18',
   kurve: 'M4 19h16M5 15l4-5 4 3 6-8',
+  drucker: 'M7 9V4h10v5M7 17H4v-7h16v7h-3M7 14h10v6H7z',
   glocke: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
 } as const;
 

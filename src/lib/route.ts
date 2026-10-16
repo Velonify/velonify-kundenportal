@@ -12,8 +12,10 @@ export type Route =
   | { seite: 'utm' }
   | { seite: 'einstellungen' }
   | { seite: 'zahlen' }
+  | { seite: 'bericht'; monat: string }
   | { seite: 'anmelden'; token: string }
-  | { seite: 'vorschau'; token: string };
+  /** `ziel`: the page to open after the session is stored, e.g. "bericht/2026-10" */
+  | { seite: 'vorschau'; token: string; ziel?: string };
 
 export function leseRoute(hash: string): Route {
   const teile = hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
@@ -26,12 +28,14 @@ export function leseRoute(hash: string): Route {
       return { seite: 'einstellungen' };
     case 'zahlen':
       return { seite: 'zahlen' };
+    case 'bericht':
+      return teile[1] ? { seite: 'bericht', monat: teile[1] } : { seite: 'zahlen' };
     case 'werkzeuge':
       return teile[1] === 'utm' ? { seite: 'utm' } : { seite: 'werkzeuge' };
     case 'anmelden':
       return teile[1] ? { seite: 'anmelden', token: teile[1] } : { seite: 'start' };
     case 'vorschau':
-      return teile[1] ? { seite: 'vorschau', token: teile[1] } : { seite: 'start' };
+      return teile[1] ? { seite: 'vorschau', token: teile[1], ziel: teile.slice(2).join('/') || undefined } : { seite: 'start' };
     default:
       return { seite: 'start' };
   }
@@ -49,6 +53,8 @@ export function pfadVon(route: Route): string {
       return `#/anmelden/${route.token}`;
     case 'vorschau':
       return `#/vorschau/${route.token}`;
+    case 'bericht':
+      return `#/bericht/${encodeURIComponent(route.monat)}`;
     default:
       return `#/${route.seite}`;
   }

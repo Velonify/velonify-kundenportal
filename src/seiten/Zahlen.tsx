@@ -1,10 +1,12 @@
-import type { SpeedMessung, TrackingDaten, Zeitraum } from '../api/vertrag';
+import type { PortalBericht, SpeedMessung, TrackingDaten, Zeitraum } from '../api/vertrag';
+import { Icon } from '../components/Icon';
+import { pfadVon } from '../lib/route';
 import { usePortal } from '../portal';
 
-const zahl = (n: number, stellen = 0) => n.toLocaleString('de-DE', { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
+export const zahl = (n: number, stellen = 0) => n.toLocaleString('de-DE', { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
 const euro = (n: number, waehrung = 'EUR') => n.toLocaleString('de-DE', { style: 'currency', currency: waehrung, maximumFractionDigits: 0 });
 const prozent = (anteil: number, stellen = 1) => `${zahl(anteil * 100, stellen)} %`;
-const datum = (tag: string) => tag.split('-').reverse().join('.');
+export const datum = (tag: string) => tag.split('-').reverse().join('.');
 const zeitraumText = (z: Zeitraum) => `${datum(z.von)} – ${datum(z.bis)}`;
 
 /** Change against the 28 days before, as text with direction; lower is better for the search position. */
@@ -100,7 +102,7 @@ function Speed({ titel, m }: { titel: string; m: SpeedMessung | null }) {
   );
 }
 
-function Ga4({ d }: { d: NonNullable<TrackingDaten['ga4']> }) {
+export function Ga4({ d }: { d: NonNullable<TrackingDaten['ga4']> }) {
   return (
     <section className="block" aria-labelledby="z-ga4">
       <div className="block-kopf">
@@ -140,7 +142,7 @@ function Ga4({ d }: { d: NonNullable<TrackingDaten['ga4']> }) {
   );
 }
 
-function Gsc({ d }: { d: NonNullable<TrackingDaten['gsc']> }) {
+export function Gsc({ d }: { d: NonNullable<TrackingDaten['gsc']> }) {
   return (
     <section className="block" aria-labelledby="z-gsc">
       <div className="block-kopf">
@@ -181,37 +183,72 @@ function Gsc({ d }: { d: NonNullable<TrackingDaten['gsc']> }) {
   );
 }
 
-/** "Zahlen": the last snapshot of Google Analytics, Search Console and PageSpeed, fetched once a day. */
+export function Ladezeit({ d }: { d: NonNullable<TrackingDaten['pagespeed']> }) {
+  return (
+    <section className="block" aria-labelledby="z-speed">
+      <div className="block-kopf">
+        <h2 id="z-speed">Ladezeit</h2>
+        <span className="muted klein">PageSpeed · {d.url.replace(/^https?:\/\//, '')}</span>
+      </div>
+      <div className="speed-paar">
+        <Speed titel="Handy" m={d.mobil} />
+        <Speed titel="Desktop" m={d.desktop} />
+      </div>
+    </section>
+  );
+}
+
+/** The monthly reports as a list of links, newest first. */
+function Berichte({ berichte }: { berichte: PortalBericht[] }) {
+  return (
+    <section className="block" aria-labelledby="z-berichte">
+      <div className="block-kopf">
+        <h2 id="z-berichte">Monatsberichte</h2>
+        <span className="muted klein">Zum Lesen, Weitergeben und als PDF</span>
+      </div>
+      <ul className="berichte-liste">
+        {berichte.map((b) => (
+          <li key={b.monat}>
+            <a href={pfadVon({ seite: 'bericht', monat: b.monat })}>
+              <span className="b-titel">{b.titel}</span>
+              <span className="muted klein">
+                {b.status === 'entwurf' ? 'Entwurf, nur im Team-Zugang sichtbar' : `${b.daten.erledigt.length} erledigt${b.kommentar ? ' · mit Einschätzung' : ''}`}
+              </span>
+              <Icon name="pfeil" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** "Zahlen": the monthly reports and the last snapshot of Google Analytics, Search Console and PageSpeed, fetched once a day. */
 export function Zahlen() {
   const { daten } = usePortal();
   const z = daten.zahlen;
-  if (!z) return null;
-  const stand = new Date(z.stand_am);
+  const berichte = daten.berichte ?? [];
+  if (!z && berichte.length === 0) return null;
+  const stand = z ? new Date(z.stand_am) : null;
   return (
     <div className="seite einspaltig">
       <div className="haupt">
         <div className="kopf">
           <h1>Zahlen</h1>
-          <p>
-            Die letzten 28 Tage im Vergleich zu den 28 davor. Wird jeden Morgen aktualisiert
-            {Number.isNaN(stand.getTime()) ? '.' : `, zuletzt am ${stand.toLocaleDateString('de-DE')} um ${stand.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr.`}
-          </p>
+          {z && stand ? (
+            <p>
+              Die letzten 28 Tage im Vergleich zu den 28 davor. Wird jeden Morgen aktualisiert
+              {Number.isNaN(stand.getTime()) ? '.' : `, zuletzt am ${stand.toLocaleDateString('de-DE')} um ${stand.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr.`}
+            </p>
+          ) : (
+            <p>Jeden Monat fassen wir zusammen, was passiert ist und wie sich euer Shop entwickelt hat.</p>
+          )}
         </div>
-        {daten.vorschau && !z.sichtbar_kunde && <div className="meldung warn">Nur im Team-Zugang sichtbar: Für den Kunden ist der Bereich noch nicht freigegeben (Hub → Portal → Tracking).</div>}
-        {z.daten.ga4 && <Ga4 d={z.daten.ga4} />}
-        {z.daten.gsc && <Gsc d={z.daten.gsc} />}
-        {z.daten.pagespeed && (
-          <section className="block" aria-labelledby="z-speed">
-            <div className="block-kopf">
-              <h2 id="z-speed">Ladezeit</h2>
-              <span className="muted klein">PageSpeed · {z.daten.pagespeed.url.replace(/^https?:\/\//, '')}</span>
-            </div>
-            <div className="speed-paar">
-              <Speed titel="Handy" m={z.daten.pagespeed.mobil} />
-              <Speed titel="Desktop" m={z.daten.pagespeed.desktop} />
-            </div>
-          </section>
-        )}
+        {berichte.length > 0 && <Berichte berichte={berichte} />}
+        {z && daten.vorschau && !z.sichtbar_kunde && <div className="meldung warn">Nur im Team-Zugang sichtbar: Für den Kunden sind die laufenden Zahlen noch nicht freigegeben (Hub → Portal → Tracking).</div>}
+        {z?.daten.ga4 && <Ga4 d={z.daten.ga4} />}
+        {z?.daten.gsc && <Gsc d={z.daten.gsc} />}
+        {z?.daten.pagespeed && <Ladezeit d={z.daten.pagespeed} />}
       </div>
     </div>
   );

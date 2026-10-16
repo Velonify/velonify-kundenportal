@@ -8,6 +8,7 @@ import { Dateien } from './seiten/Dateien';
 import { Werkzeuge } from './seiten/Werkzeuge';
 import { Einstellungen } from './seiten/Einstellungen';
 import { Zahlen } from './seiten/Zahlen';
+import { Bericht } from './seiten/Bericht';
 import { Utm } from './seiten/Utm';
 import { usePortal } from './portal';
 import { initialen, wartendeKarten } from './lib/ansicht';
@@ -26,7 +27,7 @@ export function Shell({ route }: { route: Route }) {
   const p = usePortal();
   const { daten } = p;
   const offen = wartendeKarten(daten.karten).filter((k) => !p.gerade.some((g) => g.id === k.id)).length;
-  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'anmelden' || route.seite === 'vorschau' ? 'start' : route.seite;
+  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'bericht' ? 'zahlen' : route.seite === 'anmelden' || route.seite === 'vorschau' ? 'start' : route.seite;
 
   // Deep link to a card (#/projekt/<id>) opens its sheet.
   const deepLink = route.seite === 'projekt' ? route.karte : undefined;
@@ -35,9 +36,10 @@ export function Shell({ route }: { route: Route }) {
     if (deepLink) oeffneKarte(deepLink);
   }, [deepLink, oeffneKarte]);
 
+  const seitenSchluessel = route.seite === 'bericht' ? `bericht-${route.monat}` : aktiv;
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [aktiv]);
+  }, [seitenSchluessel]);
 
   const karte = p.karteOffen ? daten.karten.find((k) => k.id === p.karteOffen!.id) : undefined;
   const schliesseKarte = () => {
@@ -68,7 +70,7 @@ export function Shell({ route }: { route: Route }) {
             {(daten.firmen?.length ?? 0) > 1 && <FirmenWechsler />}
           </div>
           <nav className="tabs" aria-label="Portal">
-            {TABS.filter((t) => t.seite !== 'zahlen' || daten.zahlen).map((t) => (
+            {TABS.filter((t) => t.seite !== 'zahlen' || daten.zahlen || daten.berichte?.length).map((t) => (
               <a key={t.seite} href={pfadVon({ seite: t.seite })} aria-current={aktiv === t.seite ? 'page' : undefined}>
                 <Icon name={t.icon} />
                 <span>{t.titel}</span>
@@ -97,6 +99,7 @@ export function Shell({ route }: { route: Route }) {
         {route.seite === 'utm' && <Utm />}
         {route.seite === 'einstellungen' && <Einstellungen />}
         {route.seite === 'zahlen' && <Zahlen />}
+        {route.seite === 'bericht' && <Bericht monat={route.monat} />}
       </main>
 
       <footer className="fuss">

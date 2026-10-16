@@ -68,6 +68,43 @@ function startDaten(): Kundensicht {
       { id: 'k9', titel: 'Meta-Pixel und Conversion API', phase: 'erledigt', freigabe: '', anfrage: false, beschreibung: '', zustaendig: ['Lukas'], faellig_am: '', freigabe_am: '', erledigt_am: tag(-8), checkliste: [], kommentare: [] },
       { id: 'k10', titel: 'Neues Produkt „Ringelblumen-Balsam“ angelegt', phase: 'erledigt', freigabe: '', anfrage: true, beschreibung: '', zustaendig: ['Julian'], faellig_am: '', freigabe_am: '', erledigt_am: tag(-11), checkliste: [], kommentare: [] },
     ],
+    zahlen: {
+      stand_am: zeit(0, 6),
+      sichtbar_kunde: true,
+      daten: {
+        ga4: {
+          nutzer: 8420, sitzungen: 11230, umsatz: 48210, transaktionen: 312, conversion_rate: 312 / 11230,
+          vorher: { nutzer: 7910, sitzungen: 10480, umsatz: 41870, transaktionen: 268, conversion_rate: 268 / 10480 },
+          zeitraum: { von: tag(-28), bis: tag(-1), vorher_von: tag(-56), vorher_bis: tag(-29) },
+          waehrung: 'EUR',
+          kanaele: [
+            { name: 'Organic Search', sitzungen: 4310, umsatz: 17920 },
+            { name: 'Paid Social', sitzungen: 2980, umsatz: 12640 },
+            { name: 'Direct', sitzungen: 1870, umsatz: 9310 },
+            { name: 'Email', sitzungen: 1120, umsatz: 6150 },
+            { name: 'Referral', sitzungen: 950, umsatz: 2190 },
+          ],
+          verlauf: Array.from({ length: 28 }, (_, i) => ({ tag: tag(i - 28), sitzungen: Math.round(330 + 90 * Math.sin(i / 3) + i * 4), umsatz: 0 })),
+        },
+        gsc: {
+          klicks: 3120, impressionen: 96400, ctr: 3120 / 96400, position: 14.2,
+          vorher: { klicks: 2870, impressionen: 91200, ctr: 2870 / 91200, position: 15.1 },
+          zeitraum: { von: tag(-30), bis: tag(-3), vorher_von: tag(-58), vorher_bis: tag(-31) },
+          suchanfragen: [
+            { suchanfrage: 'naturkosmetik gesichtspflege', klicks: 410, impressionen: 8800, position: 4.1 },
+            { suchanfrage: 'alpenglanz', klicks: 380, impressionen: 1200, position: 1.2 },
+            { suchanfrage: 'ringelblumen balsam', klicks: 190, impressionen: 3400, position: 6.8 },
+          ],
+          seiten: [],
+          verlauf: Array.from({ length: 28 }, (_, i) => ({ tag: tag(i - 30), klicks: Math.round(95 + 25 * Math.cos(i / 2.5) + i), impressionen: 3400 })),
+        },
+        pagespeed: {
+          url: 'https://alpenglanz.example/',
+          mobil: { score: 58, lcp_ms: 3400, cls: 0.04, inp_ms: 240, quelle: 'feld' },
+          desktop: { score: 92, lcp_ms: 1300, cls: 0.02, inp_ms: 90, quelle: 'feld' },
+        },
+      },
+    },
     einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
     news: [

@@ -47,6 +47,70 @@ export interface PortalDatei {
   von: 'velonify' | 'kunde';
 }
 
+// ─── Tracking hub (same as src/data/tracking.ts in the hub) ───
+
+export interface Zeitraum {
+  von: string;
+  bis: string;
+  vorher_von: string;
+  vorher_bis: string;
+}
+
+export interface Ga4Summen {
+  nutzer: number;
+  sitzungen: number;
+  umsatz: number;
+  transaktionen: number;
+  /** transaktionen / sitzungen, 0–1 */
+  conversion_rate: number;
+}
+
+export interface Ga4Daten extends Ga4Summen {
+  vorher: Ga4Summen;
+  zeitraum: Zeitraum;
+  kanaele: { name: string; sitzungen: number; umsatz: number }[];
+  verlauf: { tag: string; sitzungen: number; umsatz: number }[];
+  waehrung: string;
+}
+
+export interface GscSummen {
+  klicks: number;
+  impressionen: number;
+  /** 0–1 */
+  ctr: number;
+  position: number;
+}
+
+export interface GscDaten extends GscSummen {
+  vorher: GscSummen;
+  zeitraum: Zeitraum;
+  suchanfragen: { suchanfrage: string; klicks: number; impressionen: number; position: number }[];
+  seiten: { seite: string; klicks: number; impressionen: number }[];
+  verlauf: { tag: string; klicks: number; impressionen: number }[];
+}
+
+export interface SpeedMessung {
+  score: number | null;
+  lcp_ms: number | null;
+  cls: number | null;
+  inp_ms: number | null;
+  /** "feld" = real users (Chrome UX Report), "labor" = one Lighthouse run */
+  quelle: 'feld' | 'labor';
+}
+
+export interface SpeedDaten {
+  url: string;
+  mobil: SpeedMessung | null;
+  desktop: SpeedMessung | null;
+}
+
+/** The snapshot in kunden_tracking.daten. Each source is missing when not set up or when it failed. */
+export interface TrackingDaten {
+  ga4?: Ga4Daten;
+  gsc?: GscDaten;
+  pagespeed?: SpeedDaten;
+}
+
 export type UpdateRhythmus = 'taeglich' | 'woechentlich' | 'monatlich' | 'aus';
 export type Kanal = 'email' | 'slack' | 'beide';
 /** How often the contact gets a summary and where summaries and instant notifications go. */
@@ -70,6 +134,8 @@ export interface Kundensicht {
   telefone?: Record<string, string>;
   /** Settings of the logged-in contact; null in the team access, missing on an older function. */
   einstellungen?: PortalEinstellungen | null;
+  /** Numbers of the tracking hub; null when not released (or missing on an older function). */
+  zahlen?: { stand_am: string; daten: TrackingDaten; sichtbar_kunde: boolean } | null;
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];
   /** `art`: update | meilenstein | hinweis; `datum` YYYY-MM-DD */

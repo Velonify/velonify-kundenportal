@@ -7,15 +7,17 @@ import { Projekt } from './seiten/Projekt';
 import { Dateien } from './seiten/Dateien';
 import { Werkzeuge } from './seiten/Werkzeuge';
 import { Einstellungen } from './seiten/Einstellungen';
+import { Zahlen } from './seiten/Zahlen';
 import { Utm } from './seiten/Utm';
 import { usePortal } from './portal';
 import { initialen, wartendeKarten } from './lib/ansicht';
 import { geheZu, pfadVon, type Route } from './lib/route';
 import { KONTAKT, RECHTLICHES } from './konfig';
 
-const TABS: { seite: 'start' | 'projekt' | 'dateien' | 'werkzeuge'; titel: string; icon: IconName }[] = [
+const TABS: { seite: 'start' | 'projekt' | 'zahlen' | 'dateien' | 'werkzeuge'; titel: string; icon: IconName }[] = [
   { seite: 'start', titel: 'Start', icon: 'home' },
   { seite: 'projekt', titel: 'Projekt', icon: 'projekt' },
+  { seite: 'zahlen', titel: 'Zahlen', icon: 'kurve' },
   { seite: 'dateien', titel: 'Dateien', icon: 'datei' },
   { seite: 'werkzeuge', titel: 'Werkzeuge', icon: 'tool' },
 ];
@@ -66,7 +68,7 @@ export function Shell({ route }: { route: Route }) {
             {(daten.firmen?.length ?? 0) > 1 && <FirmenWechsler />}
           </div>
           <nav className="tabs" aria-label="Portal">
-            {TABS.map((t) => (
+            {TABS.filter((t) => t.seite !== 'zahlen' || daten.zahlen).map((t) => (
               <a key={t.seite} href={pfadVon({ seite: t.seite })} aria-current={aktiv === t.seite ? 'page' : undefined}>
                 <Icon name={t.icon} />
                 <span>{t.titel}</span>
@@ -94,6 +96,7 @@ export function Shell({ route }: { route: Route }) {
         {route.seite === 'werkzeuge' && <Werkzeuge />}
         {route.seite === 'utm' && <Utm />}
         {route.seite === 'einstellungen' && <Einstellungen />}
+        {route.seite === 'zahlen' && <Zahlen />}
       </main>
 
       <footer className="fuss">

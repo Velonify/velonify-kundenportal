@@ -5,7 +5,7 @@ import { Icon } from './Icon';
  * Side sheet (full screen on phones). Escape and a click on the backdrop close it, focus stays inside
  * and goes back to where it came from; the page behind does not scroll.
  */
-export function Blatt(props: { titel: ReactNode; oben?: ReactNode; onClose: () => void; children: ReactNode; fokus?: string }) {
+export function Blatt(props: { titel: ReactNode; oben?: ReactNode; onClose: () => void; children: ReactNode; fokus?: string; breit?: boolean }) {
   const { onClose } = props;
   const titelId = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export function Blatt(props: { titel: ReactNode; oben?: ReactNode; onClose: () =
 
   return (
     <div className="schleier" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="blatt" role="dialog" aria-modal="true" aria-labelledby={titelId} ref={ref}>
+      <div className={props.breit ? 'blatt breit' : 'blatt'} role="dialog" aria-modal="true" aria-labelledby={titelId} ref={ref}>
         <div className="blatt-kopf">
           <div className="oben">
             {props.oben ?? <span />}

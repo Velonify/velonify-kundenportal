@@ -36,6 +36,9 @@ interface PortalWert {
   schliesseKarte: () => void;
   anfrageOffen: boolean;
   setAnfrageOffen: (offen: boolean) => void;
+  /** Team member whose booking page is open ("Termin buchen"), or null. */
+  terminMit: string | null;
+  setTerminMit: (person: string | null) => void;
   herunterladen: (d: PortalDatei) => Promise<void>;
   /** Opens another client of the same person (switcher). */
   wechseln: (firmaId: string) => Promise<void>;
@@ -59,6 +62,7 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
   const [gerade, setGerade] = useState<GeradeErledigt[]>([]);
   const [karteOffen, setKarteOffen] = useState<{ id: string; aendern?: boolean } | null>(null);
   const [anfrageOffen, setAnfrageOffen] = useState(false);
+  const [terminMit, setTerminMit] = useState<string | null>(null);
   const [aktualisiert, setAktualisiert] = useState(false);
   const timer = useRef(new Map<string, { t: ReturnType<typeof setTimeout>; senden: () => void }>());
 
@@ -203,11 +207,13 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
       schliesseKarte: () => setKarteOffen(null),
       anfrageOffen,
       setAnfrageOffen,
+      terminMit,
+      setTerminMit,
       herunterladen,
       wechseln,
       fehler,
     }),
-    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, herunterladen, wechseln, fehler],
+    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, terminMit, herunterladen, wechseln, fehler],
   );
 
   return <Kontext.Provider value={wert}>{props.children}</Kontext.Provider>;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Icon, Logo, type IconName } from './components/Icon';
 import { KarteBlatt } from './seiten/KarteBlatt';
 import { AnfrageBlatt } from './seiten/AnfrageBlatt';
+import { TerminBlatt } from './seiten/TerminBlatt';
 import { Start } from './seiten/Start';
 import { Projekt } from './seiten/Projekt';
 import { Dateien } from './seiten/Dateien';
@@ -118,6 +119,7 @@ export function Shell({ route }: { route: Route }) {
       {p.karteOffen && karte && <KarteBlatt karte={karte} aendern={p.karteOffen.aendern} onClose={schliesseKarte} />}
       {p.karteOffen && !karte && <KarteFehlt onClose={schliesseKarte} />}
       {p.anfrageOffen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
+      {p.terminMit && daten.termine?.[p.terminMit] && <TerminBlatt person={p.terminMit} link={daten.termine[p.terminMit]} onClose={() => p.setTerminMit(null)} />}
     </>
   );
 }
@@ -134,7 +136,7 @@ function KarteFehlt({ onClose }: { onClose: () => void }) {
 }
 
 function Menue() {
-  const { daten, abmelden, wechseln } = usePortal();
+  const { daten, abmelden, wechseln, setTerminMit } = usePortal();
   const [offen, setOffen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const name = `${daten.ich.vorname} ${daten.ich.nachname}`.trim() || daten.ich.email;
@@ -187,6 +189,12 @@ function Menue() {
             <Icon name="post" />
             {daten.slack ? 'E-Mail schreiben' : 'Velonify schreiben'}
           </a>
+          {Object.keys(daten.termine ?? {}).map((person) => (
+            <button key={person} type="button" onClick={() => { setOffen(false); setTerminMit(person); }}>
+              <Icon name="kalender" />
+              {Object.keys(daten.termine ?? {}).length > 1 ? `Termin mit ${person}` : 'Termin buchen'}
+            </button>
+          ))}
           <a href={pfadVon({ seite: 'einstellungen' })} onClick={() => setOffen(false)}>
             <Icon name="glocke" />
             Benachrichtigungen

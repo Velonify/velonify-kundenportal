@@ -156,6 +156,8 @@ export interface Kundensicht {
   team: string[];
   /** Phone numbers of the team members in `team` (name → number); older backends send none. */
   telefone?: Record<string, string>;
+  /** Booking pages (Calendly, Google …) of the team members in `team` (name → https link); older backends send none. */
+  termine?: Record<string, string>;
   /** Settings of the logged-in contact; null in the team access, missing on an older function. */
   einstellungen?: PortalEinstellungen | null;
   /** Numbers of the tracking hub; null when not released (or missing on an older function). */

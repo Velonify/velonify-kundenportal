@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte, type Sitzung } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalEinstellungen, type PortalDatei, type PortalKarte, type Sitzung } from './vertrag';
 
 const VERBINDUNG = 'Wir erreichen den Server gerade nicht. Prüf deine Verbindung oder versuch es in ein paar Minuten noch einmal.';
 
@@ -87,6 +87,10 @@ export class HttpApi implements PortalApi {
 
   wechseln(firmaId: string): Promise<Sitzung> {
     return this.post<Sitzung>('/wechseln', { firma_id: firmaId });
+  }
+
+  einstellungen(e: PortalEinstellungen): Promise<PortalEinstellungen> {
+    return this.post<PortalEinstellungen>('/einstellungen', e);
   }
 
   /** XHR instead of fetch, because only XHR reports upload progress. */

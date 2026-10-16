@@ -10,6 +10,7 @@ export type Route =
   | { seite: 'dateien' }
   | { seite: 'werkzeuge' }
   | { seite: 'utm' }
+  | { seite: 'einstellungen' }
   | { seite: 'anmelden'; token: string }
   | { seite: 'vorschau'; token: string };
 
@@ -20,6 +21,8 @@ export function leseRoute(hash: string): Route {
       return { seite: 'projekt', karte: teile[1] };
     case 'dateien':
       return { seite: 'dateien' };
+    case 'einstellungen':
+      return { seite: 'einstellungen' };
     case 'werkzeuge':
       return teile[1] === 'utm' ? { seite: 'utm' } : { seite: 'werkzeuge' };
     case 'anmelden':

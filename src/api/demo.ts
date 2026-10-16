@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type Kundensicht, type PortalApi, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
 import { zuGross } from './client';
 
 /** Demo client for local work and previews without the function. Made-up company, dates relative to today. */
@@ -68,6 +68,7 @@ function startDaten(): Kundensicht {
       { id: 'k9', titel: 'Meta-Pixel und Conversion API', phase: 'erledigt', freigabe: '', anfrage: false, beschreibung: '', zustaendig: ['Lukas'], faellig_am: '', freigabe_am: '', erledigt_am: tag(-8), checkliste: [], kommentare: [] },
       { id: 'k10', titel: 'Neues Produkt „Ringelblumen-Balsam“ angelegt', phase: 'erledigt', freigabe: '', anfrage: true, beschreibung: '', zustaendig: ['Julian'], faellig_am: '', freigabe_am: '', erledigt_am: tag(-11), checkliste: [], kommentare: [] },
     ],
+    einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
     news: [
       { id: 'n1', art: 'meilenstein', titel: 'Tracking ist komplett', text: 'Ab jetzt sehen wir, welche Kampagne welchen Umsatz bringt.', datum: tag(-1) },
@@ -156,6 +157,12 @@ export class DemoApi implements PortalApi {
     };
     this.stand.karten.push(karte);
     return structuredClone(karte);
+  }
+
+  async einstellungen(e: PortalEinstellungen): Promise<PortalEinstellungen> {
+    await warte();
+    this.stand.einstellungen = { ...e };
+    return { ...e };
   }
 
   async wechseln(firmaId: string): Promise<{ sitzung: string; gueltig_bis: string }> {

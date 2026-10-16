@@ -4,6 +4,8 @@ import { wartendeKarten } from '../lib/ansicht';
 import { datumRelativ, heute, tagVon } from '../lib/datum';
 import { usePortal } from '../portal';
 import { Feed, Neben, Projektstand } from './Bausteine';
+import { FeedbackFrage } from './Feedback';
+import { useState } from 'react';
 
 const ZAHLWORT = ['Keine', 'Eine', 'Zwei', 'Drei', 'Vier', 'Fünf', 'Sechs', 'Sieben', 'Acht', 'Neun', 'Zehn'];
 
@@ -19,6 +21,8 @@ export function Start() {
   const { daten, gerade } = p;
   const wartend = wartendeKarten(daten.karten).filter((k) => !gerade.some((g) => g.id === k.id));
   const arbeit = daten.karten.filter((k) => k.phase === 'arbeit').length;
+  // Kept from the first render, so the thank-you stays after rating.
+  const [fragen] = useState(() => daten.feedback?.offen ?? []);
   const n = wartend.length;
   const satz = n
     ? `${ZAHLWORT[n] ?? n} ${n === 1 ? 'Sache wartet' : 'Sachen warten'} auf deine Freigabe.${arbeit ? ` Das Team arbeitet gerade an ${arbeit} ${arbeit === 1 ? 'Aufgabe' : 'Aufgaben'}.` : ''}`
@@ -65,6 +69,20 @@ export function Start() {
             </div>
           )}
         </section>
+
+        {fragen.length > 0 && (
+          <section className="block" aria-labelledby="gefragt">
+            <div className="block-kopf">
+              <h2 id="gefragt">Kurz gefragt</h2>
+            </div>
+            {fragen.map((f) => (
+              <div className="feedback-karte" key={f.bezug_id}>
+                <Icon name="flagge" />
+                <FeedbackFrage anlass="meilenstein" bezugId={f.bezug_id} frage={`Etappe „${f.titel}“ ist geschafft. Wie zufrieden bist du damit?`} kompakt />
+              </div>
+            ))}
+          </section>
+        )}
 
         <Projektstand fahrplan={daten.fahrplan} />
 

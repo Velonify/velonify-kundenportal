@@ -2,6 +2,7 @@ import { Icon, Logo } from '../components/Icon';
 import { usePortal } from '../portal';
 import { pfadVon } from '../lib/route';
 import { datum, Ga4, Gsc, Ladezeit } from './Zahlen';
+import { FeedbackFrage } from './Feedback';
 
 const monatsname = (titel: string) => titel.split(' ')[0];
 
@@ -106,6 +107,10 @@ export function Bericht({ monat }: { monat: string }) {
             </ul>
           </section>
         )}
+
+        <section className="block nicht-drucken bericht-feedback" aria-label="Feedback zum Monat">
+          <FeedbackFrage anlass="bericht" bezugId={b.monat} frage={`Wie zufrieden warst du im ${name} mit uns?`} />
+        </section>
 
         <p className="bericht-fuss muted klein">
           Velonify · Monatsbericht {b.titel} für {daten.kunde.name}

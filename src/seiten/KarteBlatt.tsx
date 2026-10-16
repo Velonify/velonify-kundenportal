@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import type { PortalKarte } from '../api/vertrag';
+import { FeedbackFrage } from './Feedback';
 import { Blatt } from '../components/Blatt';
 import { Icon } from '../components/Icon';
 import { Text } from '../components/Text';
@@ -122,6 +123,8 @@ export function KarteBlatt({ karte, aendern, onClose }: { karte: PortalKarte; ae
             </div>
           </div>
         )}
+
+        {karte.phase === 'erledigt' && <FeedbackFrage anlass="karte" bezugId={karte.id} frage="Wie zufrieden bist du mit dem Ergebnis?" kompakt />}
 
         <div style={{ display: 'grid', gap: 14 }}>
           <span className="unterkopf">Gespräch</span>

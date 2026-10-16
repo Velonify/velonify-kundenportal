@@ -473,6 +473,26 @@ button.gruppe-kopf:hover h2 { color: var(--bordeaux); }
 .bericht-fuss { border-top: 1px solid var(--linie); padding-top: 14px; }
 .druck-marke { display: none; }
 
+/* Feedback */
+.feedback-frage { display: grid; gap: 10px; background: var(--flaeche); border: 1px solid var(--linie); padding: 16px 18px; }
+.feedback-frage.kompakt { padding: 0; border: 0; background: none; }
+.feedback-frage .frage { font-weight: 700; }
+.feedback-frage textarea { width: 100%; }
+.feedback-frage .aktionen { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.sterne-wahl { display: flex; align-items: center; gap: 2px; }
+.sterne-wahl label { font-size: 30px; line-height: 1; color: var(--linie); cursor: pointer; padding: 2px; transition: color .1s, transform .1s; }
+.sterne-wahl label.an { color: #d99a00; }
+.sterne-wahl label:hover { transform: scale(1.12); }
+.sterne-wahl label:has(input:focus-visible) { outline: 2px solid var(--bordeaux); outline-offset: 1px; }
+.sterne-wahl label:has(input:disabled) { cursor: default; }
+.sterne-wort { margin-left: 10px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.zitat-ok { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); }
+.zitat-ok input { margin-top: 3px; }
+.feedback-danke { display: flex; gap: 8px; align-items: center; background: var(--ok-grund); color: var(--ok); font-weight: 700; padding: 12px 14px; font-size: 14px; }
+.feedback-danke.begeistert { display: grid; gap: 10px; justify-items: start; background: var(--eis-hell); color: var(--ink); font-weight: 400; }
+.feedback-karte { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; background: var(--flaeche); border: 1px solid var(--linie); padding: 16px 18px; }
+.feedback-karte > .i { color: var(--bordeaux); margin-top: 2px; }
+
 /* Printing a report ("Als PDF speichern"): only the report, on white, without the portal around it. */
 @media print {
   @page { margin: 16mm 14mm; }

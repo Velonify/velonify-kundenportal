@@ -126,7 +126,10 @@ export function Neben() {
         {daten.team.map((name) => (
           <div className="person" key={name}>
             <span className="av team">{initialen(name)}</span>
-            <div><strong>{name}</strong></div>
+            <div>
+              <strong>{name}</strong>
+              {daten.telefone?.[name] && <a href={`tel:${daten.telefone[name].replace(/[^\d+]/g, '')}`}>{daten.telefone[name]}</a>}
+            </div>
           </div>
         ))}
         <div className="kontaktwege">

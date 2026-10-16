@@ -180,7 +180,8 @@ button.eintrag:focus-visible { outline: 2px solid var(--bordeaux); outline-offse
 .person { display: flex; gap: 10px; align-items: center; }
 .person strong { display: block; font-size: 14px; }
 .person span { font-size: 13px; color: var(--ink-2); }
-.person a { text-decoration: none; }
+.person a { text-decoration: none; font-size: 13px; color: var(--ink-2); }
+.person a:hover { color: var(--bordeaux); }
 .person a:hover strong { color: var(--bordeaux); }
 .notfall { border-top: 1px solid var(--linie); padding-top: 12px; }
 .schnell { display: grid; gap: 2px; }

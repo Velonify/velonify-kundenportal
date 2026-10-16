@@ -6,6 +6,7 @@ import { Start } from './seiten/Start';
 import { Projekt } from './seiten/Projekt';
 import { Dateien } from './seiten/Dateien';
 import { Werkzeuge } from './seiten/Werkzeuge';
+import { Einstellungen } from './seiten/Einstellungen';
 import { Utm } from './seiten/Utm';
 import { usePortal } from './portal';
 import { initialen, wartendeKarten } from './lib/ansicht';
@@ -92,6 +93,7 @@ export function Shell({ route }: { route: Route }) {
         {aktiv === 'dateien' && <Dateien />}
         {route.seite === 'werkzeuge' && <Werkzeuge />}
         {route.seite === 'utm' && <Utm />}
+        {route.seite === 'einstellungen' && <Einstellungen />}
       </main>
 
       <footer className="fuss">
@@ -178,6 +180,10 @@ function Menue() {
           <a href={`mailto:${KONTAKT.email}`}>
             <Icon name="post" />
             {daten.slack ? 'E-Mail schreiben' : 'Velonify schreiben'}
+          </a>
+          <a href={pfadVon({ seite: 'einstellungen' })} onClick={() => setOffen(false)}>
+            <Icon name="glocke" />
+            Benachrichtigungen
           </a>
           <button type="button" onClick={abmelden}>
             <Icon name="aus" />

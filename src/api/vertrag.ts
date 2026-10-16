@@ -47,6 +47,15 @@ export interface PortalDatei {
   von: 'velonify' | 'kunde';
 }
 
+export type UpdateRhythmus = 'taeglich' | 'woechentlich' | 'monatlich' | 'aus';
+export type Kanal = 'email' | 'slack' | 'beide';
+/** How often the contact gets a summary and where summaries and instant notifications go. */
+export interface PortalEinstellungen {
+  updates: UpdateRhythmus;
+  kanal_updates: Kanal;
+  kanal_hinweise: Kanal;
+}
+
 export interface Kundensicht {
   kunde: { name: string; kuerzel: string };
   /** The client's Slack channel; the preferred way to reach the team. Null (or missing on an older function) without one. */
@@ -59,6 +68,8 @@ export interface Kundensicht {
   team: string[];
   /** Phone numbers of the team members in `team` (name → number); older backends send none. */
   telefone?: Record<string, string>;
+  /** Settings of the logged-in contact; null in the team access, missing on an older function. */
+  einstellungen?: PortalEinstellungen | null;
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];
   /** `art`: update | meilenstein | hinweis; `datum` YYYY-MM-DD */
@@ -94,6 +105,7 @@ export interface PortalApi {
   hochladen(datei: File, fortschritt?: (anteil: number) => void): Promise<PortalDatei>;
   /** A session for another client of the same person. */
   wechseln(firmaId: string): Promise<Sitzung>;
+  einstellungen(e: PortalEinstellungen): Promise<PortalEinstellungen>;
 }
 
 /** Answer of the API with a message for the user (German, du). `status` 401 means: log in again. */

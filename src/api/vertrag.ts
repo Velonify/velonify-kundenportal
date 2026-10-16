@@ -57,6 +57,8 @@ export interface Kundensicht {
   /** All clients this person may open (same e-mail, a login at each), the current one included. */
   firmen?: { id: string; name: string }[];
   team: string[];
+  /** Phone numbers of the team members in `team` (name → number); older backends send none. */
+  telefone?: Record<string, string>;
   fahrplan: { titel: string; datum: string; status: MeilensteinStatus }[];
   karten: PortalKarte[];
   /** `art`: update | meilenstein | hinweis; `datum` YYYY-MM-DD */

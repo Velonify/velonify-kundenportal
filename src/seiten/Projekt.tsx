@@ -56,7 +56,7 @@ export function Projekt() {
 
   return (
     <div className="seite einspaltig">
-      <div className="haupt">
+      <div className="haupt" data-rundgang="projekt">
         <div className="kopf">
           <h1>Projekt</h1>
           <p>

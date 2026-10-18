@@ -121,7 +121,7 @@ export function Neben() {
   const links = daten.links.slice(0, 6);
   return (
     <aside className="neben" aria-label="Team und Links">
-      <div className="seitenkarte">
+      <div className="seitenkarte" data-rundgang="team">
         <h2>Dein Team bei Velonify</h2>
         {daten.team.map((name) => (
           <div className="person" key={name}>

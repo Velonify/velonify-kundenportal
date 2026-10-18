@@ -7,6 +7,8 @@ Das Portal für Kunden von Velonify unter **https://kunden.velonify.de**. Kunden
 - **Dateien:** `07_Client-Share` im Kundenordner, Upload nach `07_Client-Share/Vom Kunden` (bis 25 MB)
 - **Werkzeuge:** freigeschaltete Kunden-Werkzeuge (UTM-Generator) und die Links des Kunden
 - **Neue Anfrage:** wird eine Karte auf dem Kunden-Board, mit Anhängen und „Dringend“
+- **Rundgang:** startet beim ersten Besuch von selbst (Spotlight gleitet von Funktion zu Funktion, nur Schritte für das, was der Kunde hat), danach über Menü und Fuß; Stand pro Kontakt auf dem Server (`POST /gesehen`)
+- **Neu im Portal:** neue Funktionen stehen in `src/neuerungen.ts`. Jeder Feature-PR trägt dort seinen Eintrag ein (feste `id`, `datum`, Ziel `data-rundgang`). Wer den Rundgang vorher gesehen hat, bekommt sie einmal als kurzen Spotlight; alle stehen unter Menü → „Neu im Portal“
 
 Im Repo liegen keine Kundendaten. Alles kommt nach dem Login von der Cloud Function `kundenportal` (Repo [Velonify/velonify-crm](https://github.com/Velonify/velonify-crm), `functions/kundenportal`). Der API-Vertrag steht in `src/api/vertrag.ts`, eine Kopie von `src/data/portalApi.ts` im Hub. Wer ihn ändert, ändert beide Seiten.
 

@@ -41,7 +41,7 @@ export function Start() {
           <p>{satz}</p>
         </div>
 
-        <section className="block" aria-labelledby="zu-tun">
+        <section className="block" aria-labelledby="zu-tun" data-rundgang="zu-tun">
           <div className="block-kopf">
             <h2 id="zu-tun">
               Für dich zu tun {n > 0 && <span className="n">{n}</span>}

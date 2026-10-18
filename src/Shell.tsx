@@ -11,6 +11,8 @@ import { Werkzeuge } from './seiten/Werkzeuge';
 import { Einstellungen } from './seiten/Einstellungen';
 import { Zahlen } from './seiten/Zahlen';
 import { Bericht } from './seiten/Bericht';
+import { Neu } from './seiten/Neu';
+import { Rundgang } from './components/Rundgang';
 import { Utm } from './seiten/Utm';
 import { usePortal } from './portal';
 import { initialen, wartendeKarten } from './lib/ansicht';
@@ -85,7 +87,7 @@ export function Shell({ route }: { route: Route }) {
             ))}
           </nav>
           <span className="sp" />
-          <button className="btn btn-anfrage" type="button" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
+          <button className="btn btn-anfrage" type="button" data-rundgang="anfrage" onClick={() => p.setAnfrageOffen(true)} aria-label="Neue Anfrage">
             <Icon name="plus" />
             <span className="t">Neue Anfrage</span>
           </button>
@@ -102,6 +104,7 @@ export function Shell({ route }: { route: Route }) {
         {route.seite === 'einstellungen' && <Einstellungen />}
         {route.seite === 'zahlen' && <Zahlen />}
         {route.seite === 'bericht' && <Bericht monat={route.monat} />}
+        {route.seite === 'neu' && <Neu />}
       </main>
 
       <footer className="fuss">
@@ -113,6 +116,7 @@ export function Shell({ route }: { route: Route }) {
             <a href={`mailto:${KONTAKT.email}`}>{KONTAKT.email}</a>
           )}
         </span>
+        <button type="button" className="fuss-knopf" onClick={p.starteRundgang}>Hilfe &amp; Rundgang</button>
         <a href={RECHTLICHES.impressum} target="_blank" rel="noopener noreferrer">Impressum</a>
         <a href={RECHTLICHES.datenschutz} target="_blank" rel="noopener noreferrer">Datenschutz</a>
       </footer>
@@ -122,6 +126,7 @@ export function Shell({ route }: { route: Route }) {
       {p.anfrageOffen && <AnfrageBlatt onClose={() => p.setAnfrageOffen(false)} />}
       {p.feedbackOffen && <FeedbackBlatt onClose={() => p.setFeedbackOffen(false)} />}
       {p.terminMit && daten.termine?.[p.terminMit] && <TerminBlatt person={p.terminMit} link={daten.termine[p.terminMit]} onClose={() => p.setTerminMit(null)} />}
+      {p.tour && <Rundgang tour={p.tour} onEnde={p.beendeTour} />}
     </>
   );
 }
@@ -138,7 +143,7 @@ function KarteFehlt({ onClose }: { onClose: () => void }) {
 }
 
 function Menue() {
-  const { daten, abmelden, wechseln, setTerminMit, setFeedbackOffen } = usePortal();
+  const { daten, abmelden, wechseln, setTerminMit, setFeedbackOffen, starteRundgang } = usePortal();
   const [offen, setOffen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const name = `${daten.ich.vorname} ${daten.ich.nachname}`.trim() || daten.ich.email;
@@ -158,7 +163,7 @@ function Menue() {
 
   return (
     <div className="menue" ref={ref}>
-      <button className="avatar-btn" type="button" aria-expanded={offen} aria-haspopup="true" onClick={() => setOffen(!offen)}>
+      <button className="avatar-btn" type="button" data-rundgang="menue" aria-expanded={offen} aria-haspopup="true" onClick={() => setOffen(!offen)}>
         <span className="av">{initialen(name)}</span>
         <span className="name">{daten.ich.vorname || name}</span>
       </button>
@@ -204,6 +209,14 @@ function Menue() {
           <a href={pfadVon({ seite: 'einstellungen' })} onClick={() => setOffen(false)}>
             <Icon name="glocke" />
             Benachrichtigungen
+          </a>
+          <button type="button" onClick={() => { setOffen(false); starteRundgang(); }}>
+            <Icon name="funke" />
+            Rundgang starten
+          </button>
+          <a href={pfadVon({ seite: 'neu' })} onClick={() => setOffen(false)}>
+            <Icon name="info" />
+            Neu im Portal
           </a>
           <button type="button" onClick={abmelden}>
             <Icon name="aus" />

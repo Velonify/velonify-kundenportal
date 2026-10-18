@@ -63,7 +63,7 @@ export function Dateien() {
 
   return (
     <div className="seite einspaltig">
-      <div className="haupt">
+      <div className="haupt" data-rundgang="dateien">
         <div className="kopf">
           <h1>Dateien</h1>
           <p>Was wir euch schicken und was ihr uns schickt, neueste zuerst.</p>

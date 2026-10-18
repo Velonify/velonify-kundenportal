@@ -2,6 +2,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { ApiFehler, type Kundensicht, type PortalApi, type PortalDatei, type PortalKarte, type Sitzung } from './api/vertrag';
 import { useToast } from './components/Toast';
 import { letzterBesuch } from './lib/zuletzt';
+import { automatischeTour, neuerungsSchritt, rundgangSchritte, type Tour } from './lib/rundgang';
+import { heute } from './lib/datum';
+import { leseRoute } from './lib/route';
+import { NEUERUNGEN, type Neuerung } from './neuerungen';
 
 /** Seconds a one-click approval waits before it is sent, so "Rückgängig" can still catch it. */
 const RUECKGAENGIG_MS = 5000;
@@ -47,6 +51,12 @@ interface PortalWert {
   herunterladen: (d: PortalDatei) => Promise<void>;
   /** Opens another client of the same person (switcher). */
   wechseln: (firmaId: string) => Promise<void>;
+  /** Tour or "Neu im Portal" spotlight on screen, or null. */
+  tour: Tour | null;
+  starteRundgang: () => void;
+  zeigeNeuerung: (n: Neuerung) => void;
+  /** Closes the tour (finished or skipped) and remembers it on the server. */
+  beendeTour: () => void;
   /** Shows the error, and logs out on an expired session. */
   fehler: (err: unknown) => void;
 }
@@ -76,6 +86,7 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
     });
   }, []);
   const [aktualisiert, setAktualisiert] = useState(false);
+  const [tour, setTour] = useState<Tour | null>(null);
   const timer = useRef(new Map<string, { t: ReturnType<typeof setTimeout>; senden: () => void }>());
 
   const fehler = useCallback(
@@ -169,6 +180,36 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
     };
   }, []);
 
+  // After loading: the tour on the first visit, later new features once. Not when a link opened a card or report.
+  useEffect(() => {
+    const route = leseRoute(location.hash);
+    if ((route.seite === 'projekt' && route.karte) || route.seite === 'bericht') return;
+    const t = setTimeout(() => {
+      const auto = automatischeTour(props.start, NEUERUNGEN, heute());
+      if (auto) setTour((jetzt) => jetzt ?? auto);
+    }, 700);
+    return () => clearTimeout(t);
+    // only for the data the portal opened with
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const starteRundgang = useCallback(() => {
+    setKarteOffen(null);
+    setTour({ art: 'rundgang', schritte: rundgangSchritte(daten) });
+  }, [daten]);
+
+  const zeigeNeuerung = useCallback((n: Neuerung) => setTour({ art: 'neu', schritte: [neuerungsSchritt(n)], ids: [n.id] }), []);
+
+  const beendeTour = useCallback(() => {
+    if (!tour) return;
+    setTour(null);
+    // Team access and an older function: nothing to remember.
+    if (daten.vorschau || !daten.rundgang) return;
+    const eingabe = tour.art === 'rundgang' ? { rundgang: true as const } : { neuerungen: tour.ids };
+    setDaten((d) => d.rundgang ? { ...d, rundgang: { gesehen_am: 'rundgang' in eingabe ? new Date().toISOString() : d.rundgang.gesehen_am, neuerungen: [...new Set([...d.rundgang.neuerungen, ...(eingabe.neuerungen ?? [])])] } } : d);
+    api.gesehen(eingabe).catch((err) => console.warn('Rundgang nicht gespeichert', err));
+  }, [tour, daten.vorschau, daten.rundgang, api]);
+
   const herunterladen = useCallback(
     async (d: PortalDatei) => {
       try {
@@ -226,9 +267,13 @@ export function PortalBereich(props: { api: PortalApi; demo: boolean; start: Kun
       setFeedbackOffen,
       herunterladen,
       wechseln,
+      tour,
+      starteRundgang,
+      zeigeNeuerung,
+      beendeTour,
       fehler,
     }),
-    [api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, terminMit, merkeFeedback, feedbackOffen, herunterladen, wechseln, fehler],
+    [tour, starteRundgang, zeigeNeuerung, beendeTour, api, props.demo, daten, neuSeit, aktualisiert, ersetzeKarte, fuegeDateiHinzu, neuLaden, onAbmelden, freigeben, rueckgaengig, merkeErledigt, gerade, karteOffen, anfrageOffen, terminMit, merkeFeedback, feedbackOffen, herunterladen, wechseln, fehler],
   );
 
   return <Kontext.Provider value={wert}>{props.children}</Kontext.Provider>;

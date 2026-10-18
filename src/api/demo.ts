@@ -1,4 +1,5 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte, type PortalRundgang } from './vertrag';
+import { speicher } from '../lib/speicher';
 import { zuGross } from './client';
 
 /** Demo client for local work and previews without the function. Made-up company, dates relative to today. */
@@ -184,6 +185,7 @@ function startDaten(): Kundensicht {
     berichte: demoBerichte(),
     feedback: { gegeben: [], offen: [{ anlass: 'meilenstein', bezug_id: 'KM-TRACKING', titel: 'Tracking' }], bewertung_url: 'https://example.com/google-bewertung' },
     einstellungen: { updates: 'woechentlich', kanal_updates: 'email', kanal_hinweise: 'slack' },
+    rundgang: demoRundgang(),
     telefone: { Lukas: '+49 170 0000000', Julian: '+49 160 0000000' },
     termine: { Lukas: 'https://example.com/termin-buchen' },
     news: [
@@ -205,6 +207,19 @@ function startDaten(): Kundensicht {
       { id: 'd5', name: 'Logo_Alpenglanz.svg', mimeType: 'image/svg+xml', geaendert: zeit(-25, 12), von: 'kunde' },
     ],
   };
+}
+
+/** The demo keeps the tour state in this browser, so it behaves like the server across reloads. */
+const RUNDGANG_KEY = 'velonify-portal.demo-rundgang';
+
+function demoRundgang(): PortalRundgang {
+  try {
+    const r = JSON.parse(speicher.lies(RUNDGANG_KEY) ?? '') as PortalRundgang;
+    if (typeof r.gesehen_am === 'string' && Array.isArray(r.neuerungen)) return r;
+  } catch {
+    // nothing stored yet
+  }
+  return { gesehen_am: '', neuerungen: [] };
 }
 
 export class DemoApi implements PortalApi {
@@ -290,6 +305,15 @@ export class DemoApi implements PortalApi {
       this.stand.feedback = { ...fb, gegeben: [...fb.gegeben, schluessel], offen: fb.offen.filter((o) => `${o.anlass}:${o.bezug_id}` !== schluessel) };
     }
     return { ok: true };
+  }
+
+  async gesehen(e: { rundgang?: true; neuerungen?: string[] }): Promise<{ gespeichert: boolean; rundgang: PortalRundgang }> {
+    await warte(150);
+    const r = this.stand.rundgang ?? { gesehen_am: '', neuerungen: [] };
+    const neu = { gesehen_am: e.rundgang ? new Date().toISOString() : r.gesehen_am, neuerungen: [...new Set([...r.neuerungen, ...(e.neuerungen ?? [])])] };
+    this.stand.rundgang = neu;
+    speicher.schreib(RUNDGANG_KEY, JSON.stringify(neu));
+    return { gespeichert: true, rundgang: structuredClone(neu) };
   }
 
   async wechseln(firmaId: string): Promise<{ sitzung: string; gueltig_bis: string }> {

@@ -26,6 +26,7 @@ const PFADE = {
   kurve: 'M4 19h16M5 15l4-5 4 3 6-8',
   drucker: 'M7 9V4h10v5M7 17H4v-7h16v7h-3M7 14h10v6H7z',
   kalender: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5',
+  funke: 'M12 3v5M12 16v5M3 12h5M16 12h5M6.5 6.5l2.5 2.5M15 15l2.5 2.5M6.5 17.5L9 15M15 9l2.5-2.5',
   glocke: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
 } as const;
 

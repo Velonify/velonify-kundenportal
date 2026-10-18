@@ -120,6 +120,14 @@ export interface PortalEinstellungen {
   kanal_hinweise: Kanal;
 }
 
+/** Tour and "Neu im Portal" of the logged-in contact, stored on the server. */
+export interface PortalRundgang {
+  /** When the tour was finished or skipped (ISO); '' = show it. */
+  gesehen_am: string;
+  /** Ids of the new features already shown (see neuerungen.ts). */
+  neuerungen: string[];
+}
+
 /** Content of a monthly report (see monatsbericht.ts in the hub repo). */
 export interface BerichtDaten {
   /** Numbers of the calendar month against the month before; PageSpeed is the last measurement. */
@@ -160,6 +168,8 @@ export interface Kundensicht {
   termine?: Record<string, string>;
   /** Settings of the logged-in contact; null in the team access, missing on an older function. */
   einstellungen?: PortalEinstellungen | null;
+  /** Tour state of the contact; null in the team access, missing on an older function (then no tour starts by itself). */
+  rundgang?: PortalRundgang | null;
   /** Numbers of the tracking hub; null when not released (or missing on an older function). */
   zahlen?: { stand_am: string; daten: TrackingDaten; sichtbar_kunde: boolean } | null;
   /**
@@ -219,6 +229,8 @@ export interface PortalApi {
   wechseln(firmaId: string): Promise<Sitzung>;
   einstellungen(e: PortalEinstellungen): Promise<PortalEinstellungen>;
   feedback(e: FeedbackEingabe): Promise<{ ok: true }>;
+  /** Marks the tour and/or new features as seen; the team access saves nothing (`gespeichert: false`). */
+  gesehen(e: { rundgang?: true; neuerungen?: string[] }): Promise<{ gespeichert: boolean; rundgang?: PortalRundgang }>;
 }
 
 /** Answer of the API with a message for the user (German, du). `status` 401 means: log in again. */

@@ -232,7 +232,7 @@ export function Zahlen() {
   const stand = z ? new Date(z.stand_am) : null;
   return (
     <div className="seite einspaltig">
-      <div className="haupt">
+      <div className="haupt" data-rundgang="zahlen">
         <div className="kopf">
           <h1>Zahlen</h1>
           {z && stand ? (

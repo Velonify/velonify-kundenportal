@@ -509,3 +509,35 @@ button.gruppe-kopf:hover h2 { color: var(--bordeaux); }
 
 /* With five tabs the client name only fits on wide screens; it still shows in the menu. */
 @media (max-width: 1080px) and (min-width: 761px) { .marke .kunde { display: none; } .bar-in { gap: 18px; } .wechsler-btn { max-width: 150px; } .marke-zeile { flex: none; } }
+
+/* Tour: dimmed page with a spotlight that glides from element to element, the card follows. */
+.rg { position: fixed; inset: 0; z-index: 90; }
+.rg-schirm { position: absolute; inset: 0; }
+.rg-loch { position: fixed; box-shadow: 0 0 0 200vmax rgba(22, 9, 14, .58); outline: 2px solid var(--himmel); outline-offset: 0; pointer-events: none; }
+.rg-loch.leer { outline-color: transparent; }
+.rg-loch.gleitet { transition: top .36s cubic-bezier(.2, .8, .2, 1), left .36s cubic-bezier(.2, .8, .2, 1), width .36s cubic-bezier(.2, .8, .2, 1), height .36s cubic-bezier(.2, .8, .2, 1), outline-color .2s; }
+.rg-karte { position: fixed; width: min(360px, calc(100vw - 32px)); background: var(--flaeche); border: 1px solid var(--ink); box-shadow: 8px 8px 0 rgba(44, 14, 24, .22); padding: 16px 18px 14px; display: grid; gap: 10px; }
+.rg-karte.gleitet { transition: top .36s cubic-bezier(.2, .8, .2, 1), left .36s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
+@media (max-width: 760px) { .rg-karte { width: auto; } }
+.rg-kopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.rg-zu { all: unset; cursor: pointer; display: grid; place-items: center; width: 32px; height: 32px; margin: -6px -8px -6px 0; color: var(--ink-2); }
+.rg-zu:hover { color: var(--ink); }
+.rg-zu:focus-visible { outline: 2px solid var(--bordeaux); outline-offset: -2px; }
+.rg-inhalt { display: grid; gap: 6px; animation: rg-rein .28s cubic-bezier(.2, .8, .2, 1); }
+.rg-inhalt h2 { font-size: 18px; font-weight: 800; line-height: 1.3; outline: none; }
+.rg-inhalt p { color: var(--ink-2); }
+.rg-fuss { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.rg-fuss .sp { flex: 1; }
+.rg-punkte { display: flex; gap: 5px; }
+.rg-punkte span { width: 6px; height: 6px; background: var(--linie); transition: background .2s, width .2s; }
+.rg-punkte span.an { background: var(--bordeaux); width: 16px; }
+@keyframes rg-rein { from { opacity: 0; transform: translateY(4px); } }
+.neu-liste { display: grid; gap: 12px; }
+.neu-eintrag { background: var(--flaeche); border: 1px solid var(--linie); padding: 16px 18px; display: grid; gap: 6px; }
+.neu-eintrag .datum { font-size: 12px; font-weight: 700; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; }
+.neu-eintrag h2 { font-size: 16px; font-weight: 800; }
+.neu-eintrag p { color: var(--ink-2); }
+.neu-eintrag .btn { justify-self: start; margin-top: 4px; }
+.fuss-knopf { all: unset; cursor: pointer; }
+.fuss-knopf:hover { color: var(--ink); text-decoration: underline; }
+.fuss-knopf:focus-visible { outline: 2px solid var(--bordeaux); outline-offset: 2px; }

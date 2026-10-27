@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte, type PortalRundgang } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalBericht, type PortalDatei, type PortalEinstellungen, type PortalKarte, type PortalRundgang, type PortalWhiteboard, type PortalWhiteboardInhalt } from './vertrag';
 import { speicher } from '../lib/speicher';
 import { zuGross } from './client';
 
@@ -222,6 +222,30 @@ function demoRundgang(): PortalRundgang {
   return { gesehen_am: '', neuerungen: [] };
 }
 
+/** A sitemap like the team would share it: boxes with text and lines, Excalidraw fills in the rest. */
+const DEMO_BOARD: PortalWhiteboardInhalt = (() => {
+  let n = 0;
+  const kasten = (text: string, x: number, y: number, farbe = '#ffffff') => {
+    const id = `demo-${++n}`;
+    return [
+      { id, type: 'rectangle', x, y, width: 180, height: 70, backgroundColor: farbe, fillStyle: 'solid', roughness: 0, version: 1, versionNonce: n, boundElements: [{ id: `${id}-t`, type: 'text' }] },
+      { id: `${id}-t`, type: 'text', x: x + 10, y: y + 22, width: 160, height: 25, text, originalText: text, fontSize: 20, fontFamily: 5, textAlign: 'center', verticalAlign: 'middle', containerId: id, version: 1, versionNonce: n + 500 },
+    ];
+  };
+  const linie = (x: number, y: number, dx: number, dy: number) => ({ id: `demo-l${++n}`, type: 'line', x, y, width: Math.abs(dx), height: Math.abs(dy), points: [[0, 0], [dx, dy]], roughness: 0, version: 1, versionNonce: n });
+  const elemente = [
+    ...kasten('Startseite', 310, 0, '#ffec99'),
+    ...['Shop', 'Ratgeber', 'Service'].flatMap((t, i) => kasten(t, 40 + i * 270, 160, '#a5d8ff')),
+    ...['Kategorien', 'Produkt'].flatMap((t, i) => kasten(t, 40, 290 + i * 110)),
+    ...['Artikel', 'FAQ'].flatMap((t, i) => kasten(t, 310, 290 + i * 110)),
+    ...['Kontakt', 'Versand'].flatMap((t, i) => kasten(t, 580, 290 + i * 110)),
+    linie(400, 70, -270, 90),
+    linie(400, 70, 0, 90),
+    linie(400, 70, 270, 90),
+  ];
+  return { id: 'WB-DEMO', titel: 'Sitemap Relaunch', elemente, dateien: [] };
+})();
+
 export class DemoApi implements PortalApi {
   private stand = startDaten();
   private naechste = 100;
@@ -250,6 +274,21 @@ export class DemoApi implements PortalApi {
   async daten(): Promise<Kundensicht> {
     await warte(250);
     return structuredClone(this.stand);
+  }
+
+  async whiteboards(): Promise<PortalWhiteboard[]> {
+    await warte(200);
+    return [{ id: DEMO_BOARD.id, titel: DEMO_BOARD.titel, geaendert_am: new Date(Date.now() - 2 * 864e5).toISOString(), vorschau: null }];
+  }
+
+  async whiteboard(id: string): Promise<PortalWhiteboardInhalt> {
+    await warte(200);
+    if (id !== DEMO_BOARD.id) throw new ApiFehler('Dieses Whiteboard gibt es nicht (mehr).', 404);
+    return structuredClone(DEMO_BOARD);
+  }
+
+  async whiteboardDatei(): Promise<Blob> {
+    throw new ApiFehler('Die Demo hat keine Bilder auf dem Whiteboard.', 404);
   }
 
   async datei(id: string): Promise<{ blob: Blob; name: string }> {

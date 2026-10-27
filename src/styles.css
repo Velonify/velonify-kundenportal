@@ -541,3 +541,18 @@ button.gruppe-kopf:hover h2 { color: var(--bordeaux); }
 .fuss-knopf { all: unset; cursor: pointer; }
 .fuss-knopf:hover { color: var(--ink); text-decoration: underline; }
 .fuss-knopf:focus-visible { outline: 2px solid var(--bordeaux); outline-offset: 2px; }
+
+/* Whiteboards (read-only): tiles below the files, the viewer page. */
+.wb-liste h2 { font-size: 17px; font-weight: 800; }
+.wb-kacheln { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.wb-kachel { display: flex; flex-direction: column; border: 1px solid var(--linie); background: var(--flaeche); color: var(--ink); text-decoration: none; }
+.wb-kachel:hover { border-color: var(--ink); }
+.wb-bild { aspect-ratio: 16 / 10; background: #fff; border-bottom: 1px solid var(--linie); display: flex; overflow: hidden; }
+.wb-bild img { width: 100%; height: 100%; object-fit: contain; }
+.wb-raster { flex: 1; background-image: radial-gradient(circle, var(--linie) 1px, transparent 1px); background-size: 14px 14px; }
+.wb-text { display: grid; gap: 2px; padding: 10px 12px 12px; }
+.wb-seite { max-width: none; }
+.wb-kopf { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.wb-kopf h1 { flex: 1; min-width: 0; }
+.wb-frames { display: flex; align-items: center; gap: 6px; }
+.wb-flaeche { height: calc(100dvh - 210px); min-height: 420px; border: 1px solid var(--linie); background: #fff; }

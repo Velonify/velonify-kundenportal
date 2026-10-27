@@ -8,6 +8,12 @@ describe('Routen', () => {
     expect(leseRoute('#/bericht')).toEqual({ seite: 'zahlen' });
   });
 
+  it('opens a whiteboard and falls back to the files without an id', () => {
+    expect(leseRoute('#/whiteboard/WB-1')).toEqual({ seite: 'whiteboard', id: 'WB-1' });
+    expect(pfadVon({ seite: 'whiteboard', id: 'WB-1' })).toBe('#/whiteboard/WB-1');
+    expect(leseRoute('#/whiteboard')).toEqual({ seite: 'dateien' });
+  });
+
   it('keeps the target page of a team access from the hub', () => {
     expect(leseRoute('#/vorschau/abc.def')).toEqual({ seite: 'vorschau', token: 'abc.def', ziel: undefined });
     expect(leseRoute('#/vorschau/abc.def/bericht/2026-10')).toEqual({ seite: 'vorschau', token: 'abc.def', ziel: 'bericht/2026-10' });

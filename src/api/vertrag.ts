@@ -215,6 +215,24 @@ export interface AnfrageEingabe {
 }
 
 /** Everything the portal needs from the server; implemented by the real API and by the demo. */
+/** A whiteboard the team shows in the portal (read-only). */
+export interface PortalWhiteboard {
+  id: string;
+  titel: string;
+  geaendert_am: string;
+  /** Small picture as data URL, or null before the first save in the hub. */
+  vorschau: string | null;
+}
+
+export interface PortalWhiteboardInhalt {
+  id: string;
+  titel: string;
+  /** Excalidraw elements, without deleted ones. */
+  elemente: unknown[];
+  /** Ids of the images, loaded with whiteboardDatei. */
+  dateien: string[];
+}
+
 export interface PortalApi {
   anmelden(email: string): Promise<void>;
   einloesen(token: string): Promise<Sitzung>;
@@ -231,6 +249,9 @@ export interface PortalApi {
   feedback(e: FeedbackEingabe): Promise<{ ok: true }>;
   /** Marks the tour and/or new features as seen; the team access saves nothing (`gespeichert: false`). */
   gesehen(e: { rundgang?: true; neuerungen?: string[] }): Promise<{ gespeichert: boolean; rundgang?: PortalRundgang }>;
+  whiteboards(): Promise<PortalWhiteboard[]>;
+  whiteboard(id: string): Promise<PortalWhiteboardInhalt>;
+  whiteboardDatei(id: string, dateiId: string): Promise<Blob>;
 }
 
 /** Answer of the API with a message for the user (German, du). `status` 401 means: log in again. */

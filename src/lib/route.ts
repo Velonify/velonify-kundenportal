@@ -8,6 +8,8 @@ export type Route =
   | { seite: 'start' }
   | { seite: 'projekt'; karte?: string }
   | { seite: 'dateien' }
+  /** A whiteboard the team shows in the portal, read-only; the list is on the files page. */
+  | { seite: 'whiteboard'; id: string }
   | { seite: 'werkzeuge' }
   | { seite: 'utm' }
   | { seite: 'einstellungen' }
@@ -25,6 +27,8 @@ export function leseRoute(hash: string): Route {
       return { seite: 'projekt', karte: teile[1] };
     case 'dateien':
       return { seite: 'dateien' };
+    case 'whiteboard':
+      return teile[1] ? { seite: 'whiteboard', id: teile[1] } : { seite: 'dateien' };
     case 'einstellungen':
       return { seite: 'einstellungen' };
     case 'neu':
@@ -58,6 +62,8 @@ export function pfadVon(route: Route): string {
       return `#/vorschau/${route.token}`;
     case 'bericht':
       return `#/bericht/${encodeURIComponent(route.monat)}`;
+    case 'whiteboard':
+      return `#/whiteboard/${encodeURIComponent(route.id)}`;
     default:
       return `#/${route.seite}`;
   }

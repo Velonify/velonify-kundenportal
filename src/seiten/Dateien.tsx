@@ -7,6 +7,7 @@ import { dateiTyp, istGoogleDatei } from '../lib/ansicht';
 import { datumRelativ } from '../lib/datum';
 import { istNeu } from '../lib/zuletzt';
 import { usePortal } from '../portal';
+import { WhiteboardListe } from './Whiteboards';
 
 type Filter = 'alle' | 'velonify' | 'kunde';
 interface Upload {
@@ -142,6 +143,8 @@ export function Dateien() {
             })}
           </div>
         </div>
+
+        <WhiteboardListe />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Icon, Logo, type IconName } from './components/Icon';
 import { KarteBlatt } from './seiten/KarteBlatt';
 import { AnfrageBlatt } from './seiten/AnfrageBlatt';
@@ -14,6 +14,9 @@ import { Bericht } from './seiten/Bericht';
 import { Neu } from './seiten/Neu';
 import { Rundgang } from './components/Rundgang';
 import { Utm } from './seiten/Utm';
+
+// The whiteboard viewer brings Excalidraw along; only loaded when a board is opened.
+const WhiteboardSeite = lazy(() => import('./seiten/Whiteboard').then((m) => ({ default: m.WhiteboardSeite })));
 import { usePortal } from './portal';
 import { initialen, wartendeKarten } from './lib/ansicht';
 import { geheZu, pfadVon, type Route } from './lib/route';
@@ -31,7 +34,7 @@ export function Shell({ route }: { route: Route }) {
   const p = usePortal();
   const { daten } = p;
   const offen = wartendeKarten(daten.karten).filter((k) => !p.gerade.some((g) => g.id === k.id)).length;
-  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'bericht' ? 'zahlen' : route.seite === 'anmelden' || route.seite === 'vorschau' ? 'start' : route.seite;
+  const aktiv = route.seite === 'utm' ? 'werkzeuge' : route.seite === 'bericht' ? 'zahlen' : route.seite === 'whiteboard' ? 'dateien' : route.seite === 'anmelden' || route.seite === 'vorschau' ? 'start' : route.seite;
 
   // Deep link to a card (#/projekt/<id>) opens its sheet.
   const deepLink = route.seite === 'projekt' ? route.karte : undefined;
@@ -40,7 +43,7 @@ export function Shell({ route }: { route: Route }) {
     if (deepLink) oeffneKarte(deepLink);
   }, [deepLink, oeffneKarte]);
 
-  const seitenSchluessel = route.seite === 'bericht' ? `bericht-${route.monat}` : aktiv;
+  const seitenSchluessel = route.seite === 'bericht' ? `bericht-${route.monat}` : route.seite === 'whiteboard' ? `whiteboard-${route.id}` : aktiv;
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [seitenSchluessel]);
@@ -98,7 +101,12 @@ export function Shell({ route }: { route: Route }) {
       <main id="inhalt" tabIndex={-1} style={{ outline: 'none' }}>
         {aktiv === 'start' && <Start />}
         {aktiv === 'projekt' && <Projekt />}
-        {aktiv === 'dateien' && <Dateien />}
+        {route.seite === 'dateien' && <Dateien />}
+        {route.seite === 'whiteboard' && (
+          <Suspense fallback={<div className="seite"><span className="lade" /></div>}>
+            <WhiteboardSeite id={route.id} />
+          </Suspense>
+        )}
         {route.seite === 'werkzeuge' && <Werkzeuge />}
         {route.seite === 'utm' && <Utm />}
         {route.seite === 'einstellungen' && <Einstellungen />}

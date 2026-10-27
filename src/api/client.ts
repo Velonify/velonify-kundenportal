@@ -1,4 +1,4 @@
-import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalEinstellungen, type PortalDatei, type PortalKarte, type Sitzung, type PortalRundgang } from './vertrag';
+import { ApiFehler, MAX_UPLOAD_BYTES, type AnfrageEingabe, type FeedbackEingabe, type Kundensicht, type PortalApi, type PortalEinstellungen, type PortalDatei, type PortalKarte, type Sitzung, type PortalRundgang, type PortalWhiteboard, type PortalWhiteboardInhalt } from './vertrag';
 
 const VERBINDUNG = 'Wir erreichen den Server gerade nicht. Prüf deine Verbindung oder versuch es in ein paar Minuten noch einmal.';
 
@@ -99,6 +99,25 @@ export class HttpApi implements PortalApi {
 
   gesehen(e: { rundgang?: true; neuerungen?: string[] }): Promise<{ gespeichert: boolean; rundgang?: PortalRundgang }> {
     return this.post('/gesehen', e);
+  }
+
+  async whiteboards(): Promise<PortalWhiteboard[]> {
+    return (await this.rufe<{ boards: PortalWhiteboard[] }>('/whiteboards')).boards;
+  }
+
+  whiteboard(id: string): Promise<PortalWhiteboardInhalt> {
+    return this.rufe<PortalWhiteboardInhalt>(`/whiteboard/${encodeURIComponent(id)}`);
+  }
+
+  async whiteboardDatei(id: string, dateiId: string): Promise<Blob> {
+    let res: Response;
+    try {
+      res = await fetch(`${this.basis}/whiteboard/${encodeURIComponent(id)}/datei/${encodeURIComponent(dateiId)}`, { headers: this.kopf() });
+    } catch {
+      throw new ApiFehler(VERBINDUNG, 0);
+    }
+    if (!res.ok) await this.antwort(res);
+    return res.blob();
   }
 
   /** XHR instead of fetch, because only XHR reports upload progress. */
